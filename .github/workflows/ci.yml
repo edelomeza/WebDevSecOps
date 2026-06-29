@@ -41,7 +41,9 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Begin SonarCloud
-        if: secrets.SONAR_TOKEN != ''
+        if: env.SONAR_TOKEN != ''
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           dotnet sonarscanner begin /k:"WebDevSecOps" /o:"webdevsecops" \
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
@@ -72,7 +74,9 @@ jobs:
             --logger "trx;LogFileName=security-sast-results.trx"
 
       - name: End SonarCloud (Quality Gate blocks if failed)
-        if: secrets.SONAR_TOKEN != ''
+        if: env.SONAR_TOKEN != ''
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
       - name: Publish
