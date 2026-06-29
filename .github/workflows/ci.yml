@@ -212,13 +212,14 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
 
       - name: Setup Snyk
-        uses: snyk/actions/setup@v1.0.0
+        uses: snyk/actions/setup@v1
 
       - name: Snyk Scan (advisory — does not block)
-        run: snyk test --severity-threshold=high --json > snyk-report.json || true
+        if: env.SNYK_TOKEN != ''
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk test --severity-threshold=high --json > snyk-report.json
 
       - name: Upload Snyk report
         uses: actions/upload-artifact@v4
