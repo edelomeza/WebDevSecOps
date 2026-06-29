@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="WebDevSecOps Security Rules" Description="Security analyzer rules for WebDevSecOps" ToolsVersion="10.0">
+  <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
+    <!-- SQL Injection -->
+    <Rule Id="S2077" Action="Error" />
+    <!-- Stored XSS -->
+    <Rule Id="S5131" Action="Error" />
+    <!-- Disabling CSRF protection -->
+    <Rule Id="S4502" Action="Error" />
+    <!-- Open Redirect -->
+    <Rule Id="S5145" Action="Error" />
+    <!-- Using unvalidated URLs -->
+    <Rule Id="S5144" Action="Error" />
+    <!-- Insecure deserialization -->
+    <Rule Id="S5773" Action="Error" />
+    <!-- Using weak hashing algorithms (MD5, SHA1) -->
+    <Rule Id="S4790" Action="Error" />
+    <!-- Hardcoded IP addresses -->
+    <Rule Id="S1313" Action="Error" />
+    <!-- Disabling logging -->
+    <Rule Id="S5135" Action="Error" />
+    <!-- Path traversal -->
+    <Rule Id="S2083" Action="Error" />
+    <!-- LDAP injection -->
+    <Rule Id="S2078" Action="Error" />
+    <!-- Log Injection -->
+    <Rule Id="S2629" Action="Error" />
+    <!-- Cookies without Secure/HttpOnly -->
+    <Rule Id="S3330" Action="Error" />
+    <!-- Disabling authentication -->
+    <Rule Id="S2255" Action="Error" />
+    <!-- Using default passwords -->
+    <Rule Id="S1313" Action="Error" />
+    <!-- XPath injection -->
+    <Rule Id="S2091" Action="Error" />
+    <!-- XXE processing -->
+    <Rule Id="S2755" Action="Error" />
+    <!-- Request validation disabled -->
+    <Rule Id="S5693" Action="Error" />
+    <!-- Weak cipher algorithms -->
+    <Rule Id="S5547" Action="Error" />
+    <!-- JWT unsigned algorithms -->
+    <Rule Id="S5659" Action="Error" />
+  </Rules>
+  <Rules AnalyzerId="SecurityCodeScan" RuleNamespace="SecurityCodeScan">
+    <!-- SQL Injection -->
+    <Rule Id="SCS0001" Action="Error" />
+    <!-- XSS -->
+    <Rule Id="SCS0002" Action="Error" />
+    <!-- Command Injection -->
+    <Rule Id="SCS0005" Action="Error" />
+    <!-- Path Traversal -->
+    <Rule Id="SCS0016" Action="Error" />
+    <!-- Weak Cipher Algorithm -->
+    <Rule Id="SCS0026" Action="Error" />
+    <!-- Open Redirect -->
+    <Rule Id="SCS0027" Action="Error" />
+    <!-- CSRF -->
+    <Rule Id="SCS0028" Action="Error" />
+    <!-- Insecure Deserialization -->
+    <Rule Id="SCS0030" Action="Error" />
+    <!-- LDAP Injection -->
+    <Rule Id="SCS0031" Action="Error" />
+  </Rules>
+</RuleSet>

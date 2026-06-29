@@ -1,0 +1,57 @@
+name: Release — SBOM + GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install CycloneDX tool
+        run: dotnet tool install --global CycloneDX
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Generate SBOM (CycloneDX)
+        run: |
+          dotnet CycloneDX WebDevSecOps/WebDevSecOps.csproj -o ./sbom -f json
+          dotnet CycloneDX WebDevSecOps.slnx -o ./sbom -f json --solution
+
+      - name: Verify SBOM
+        run: |
+          echo "SBOM files generated:"
+          ls -la ./sbom/
+
+      - name: Create GitHub Release (draft)
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## ${{ github.ref_name }}
+
+            ### Cambios
+            Consultar el changelog para detalles de los cambios incluidos.
+
+            ### SBOM
+            Se incluye el Software Bill of Materials (SBOM) en formato CycloneDX
+            para transparencia de dependencias.
+          files: |
+            ./sbom/*.json
+          generate_release_notes: true
+          draft: true
+          prerelease: false

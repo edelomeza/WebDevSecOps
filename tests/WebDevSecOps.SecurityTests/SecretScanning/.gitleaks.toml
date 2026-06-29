@@ -1,0 +1,29 @@
+title = "WebDevSecOps Gitleaks Config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "custom-hardcoded-secret"
+description = "Custom rule: hardcoded credential patterns"
+regex = '''(?i)(?:secret|password|token|apikey|api_key|apisecret|api_secret|connectionstring).{0,5}[:=].{0,5}["'].{8,}["']'''
+tags = ["custom", "credentials"]
+
+[[rules]]
+id = "custom-private-key"
+description = "Custom rule: private key patterns"
+regex = '''-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'''
+tags = ["custom", "crypto"]
+
+[allowlist]
+description = "Allowlisted paths and content"
+paths = [
+    '''(?i).*\\be2e\\b.*''',
+    '''(?i).*\\btests?\\b.*''',
+    '''(?i).*\\bmock\\b.*''',
+    '''(?i).*\\bnode_modules\\b.*''',
+    '''\.git/''',
+    '''\.gitleaks\.toml''',
+    '''_test\.cs$''',
+    '''Tests\.cs$''',
+]

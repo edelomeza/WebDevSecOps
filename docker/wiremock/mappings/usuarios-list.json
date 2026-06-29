@@ -1,0 +1,41 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/api/v1/Usuario"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "pageNumber": 1,
+      "pageSize": 10,
+      "totalCount": 3,
+      "totalPages": 1,
+      "items": [
+        {
+          "id": 1,
+          "strNombre": "Juan Pérez",
+          "strCorreoElectronico": "juan.perez@example.com",
+          "dteFechaRegistro": "2026-01-15T10:30:00",
+          "rowVersion": "AQIDBAUGBwg="
+        },
+        {
+          "id": 2,
+          "strNombre": "María García",
+          "strCorreoElectronico": "maria.garcia@example.com",
+          "dteFechaRegistro": "2026-02-20T14:00:00",
+          "rowVersion": "CQoLDA0ODxA="
+        },
+        {
+          "id": 3,
+          "strNombre": "Carlos López",
+          "strCorreoElectronico": "carlos.lopez@example.com",
+          "dteFechaRegistro": "2026-03-10T09:15:00",
+          "rowVersion": "ERITFBUWFxg="
+        }
+      ]
+    }
+  }
+}

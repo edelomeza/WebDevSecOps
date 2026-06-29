@@ -1,0 +1,48 @@
+services:
+  webapp:
+    build:
+      context: ./WebDevSecOps
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ApiSettings__BaseUrl=http://mock-api:7227/
+    depends_on:
+      mock-api:
+        condition: service_healthy
+
+  mock-api:
+    image: wiremock/wiremock:latest
+    ports:
+      - "7227:7227"
+    volumes:
+      - ./docker/wiremock/mappings:/home/wiremock/mappings
+    command:
+      - --port
+      - "7227"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7227/__admin/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Activar con: docker compose --profile dast up
+  zap:
+    profiles:
+      - dast
+    image: ghcr.io/zaproxy/zaproxy:stable
+    command:
+      - zap.sh
+      - -cmd
+      - -port
+      - "8090"
+      - -host
+      - "0.0.0.0"
+      - -config
+      - api.key=${ZAP_API_KEY:-changeme}
+    ports:
+      - "8090:8090"
+    depends_on:
+      - webapp

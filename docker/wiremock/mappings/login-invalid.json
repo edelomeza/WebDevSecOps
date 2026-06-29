@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/api/v1/Login/login"
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/problem+json"
+    },
+    "jsonBody": {
+      "type": "https://tools.ietf.org/html/rfc7235#section-3.1",
+      "title": "Credenciales inválidas",
+      "status": 401,
+      "detail": "El usuario o la contraseña proporcionados son incorrectos."
+    }
+  }
+}

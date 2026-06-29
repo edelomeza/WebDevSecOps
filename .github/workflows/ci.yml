@@ -1,0 +1,310 @@
+name: CI — DevSecOps Pipeline
+
+on:
+  push:
+    branches: [main, master]
+    paths-ignore:
+      - "**.md"
+      - ".gitignore"
+      - ".dockerignore"
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ═══════════════════════════════════════════════
+  # JOB 1: BUILD + SONARCLOUD QUALITY GATE
+  # ═══════════════════════════════════════════════
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarCloud
+        run: |
+          dotnet sonarscanner begin /k:"WebDevSecOps" /o:"webdevsecops" \
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.qualitygate.timeout=300
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (warnings as errors — SAST analyzers)
+        run: dotnet build --configuration Release --warnaserror
+
+      - name: Unit Tests + OpenCover
+        run: |
+          dotnet test tests/WebDevSecOps.UnitTests --configuration Release \
+            --no-build /p:CollectCoverage=true /p:CoverletOutput=../coverage/ \
+            /p:CoverletOutputFormat=opencover \
+            --logger "trx;LogFileName=unit-test-results.trx"
+
+      - name: Security SAST Tests + OpenCover
+        run: |
+          dotnet test tests/WebDevSecOps.SecurityTests --configuration Release \
+            --no-build --filter "FullyQualifiedName~SAST" \
+            /p:CollectCoverage=true /p:CoverletOutput=../coverage/ \
+            /p:CoverletOutputFormat=opencover \
+            --logger "trx;LogFileName=security-sast-results.trx"
+
+      - name: End SonarCloud (Quality Gate blocks if failed)
+        run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+      - name: Publish
+        run: dotnet publish -c Release -o ./publish --no-build
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: "**/*.trx"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: ./publish
+
+  # ═══════════════════════════════════════════════
+  # JOB 2: SAST — CodeQL Analysis
+  # ═══════════════════════════════════════════════
+  codeql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          queries: security-and-quality
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  # ═══════════════════════════════════════════════
+  # JOB 3: DEPENDENCY REVIEW (solo PR)
+  # ═══════════════════════════════════════════════
+  dependency-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: always
+
+  # ═══════════════════════════════════════════════
+  # JOB 4: SAST — Security Tests (paralelo)
+  # ═══════════════════════════════════════════════
+  sast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --warnaserror
+
+      - name: Security SAST Tests
+        run: |
+          dotnet test tests/WebDevSecOps.SecurityTests --configuration Release \
+            --no-build --filter "FullyQualifiedName~SAST" \
+            --results-directory ./coverage/security \
+            --logger "trx;LogFileName=security-sast.trx"
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: ./coverage
+
+  # ═══════════════════════════════════════════════
+  # JOB 5: SCA — NuGet Audit + Snyk
+  # ═══════════════════════════════════════════════
+  sca:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup .NET 10.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: NuGet Vulnerability Audit
+        run: |
+          echo "# Reporte de Dependencias Vulnerables" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          dotnet list package --vulnerable --include-transitive 2>&1 | tee -a $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Setup Snyk
+        uses: snyk/actions/setup@v4
+
+      - name: Snyk Scan (advisory — does not block)
+        run: snyk test --severity-threshold=high --json > snyk-report.json || true
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Upload Snyk report
+        uses: actions/upload-artifact@v4
+        with:
+          name: snyk-report
+          path: snyk-report.json
+
+  # ═══════════════════════════════════════════════
+  # JOB 6: SECRET SCANNING — Gitleaks
+  # ═══════════════════════════════════════════════
+  secret-scanning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Gitleaks Scan (advisory — does not block)
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ═══════════════════════════════════════════════
+  # JOB 7: CONTAINER SCANNING — Trivy
+  # ═══════════════════════════════════════════════
+  trivy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Build Docker image
+        run: docker build -t webdevsecops:ci -f WebDevSecOps/Dockerfile .
+
+      - name: Trivy scan (advisory — does not block)
+        uses: aquasecurity/trivy-action@v0.28.0
+        with:
+          image-ref: webdevsecops:ci
+          format: sarif
+          output: trivy-results.sarif
+          severity: HIGH,CRITICAL
+          exit-code: 0
+
+      - name: Upload Trivy SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy
+
+  # ═══════════════════════════════════════════════
+  # JOB 8: DAST — OWASP ZAP Baseline Scan (solo PR)
+  # ═══════════════════════════════════════════════
+  zap-dast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'pull_request'
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./publish
+
+      - name: Start services
+        run: |
+          docker compose -f docker-compose.yml up -d webapp mock-api
+          sleep 20
+
+      - name: ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: http://localhost:5001
+          rules_file_name: tests/WebDevSecOps.SecurityTests/DAST/zap-baseline-rules.tsv
+          cmd_options: >
+            -c tests/WebDevSecOps.SecurityTests/DAST/owasp-zap-config.context
+          allow_issue_writing: true
+          artifact_name: zap-report
+          fail_action: false
+
+      - name: Stop services
+        if: always()
+        run: docker compose -f docker-compose.yml down

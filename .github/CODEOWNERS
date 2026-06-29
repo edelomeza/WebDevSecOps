@@ -1,0 +1,22 @@
+# Default owners for everything
+* @usuario-admin
+
+# CI/CD pipeline and workflows
+.github/ @usuario-devops
+
+# Docker configuration
+Dockerfile @usuario-devops
+docker-compose.yml @usuario-devops
+.dockerignore @usuario-devops
+
+# Application source code
+WebDevSecOps/ @usuario-admin
+
+# Test projects
+tests/ @usuario-maintainer
+
+# Security-critical code — requires security review
+tests/WebDevSecOps.SecurityTests/ @usuario-security
+
+# Build configuration
+Directory.Build.props @usuario-devops

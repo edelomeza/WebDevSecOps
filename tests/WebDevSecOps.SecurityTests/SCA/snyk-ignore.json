@@ -1,0 +1,24 @@
+{
+  "ignore": {
+    "SNYK-JS-MINIMIST-2429795": [
+      {
+        "*": {
+          "reason": "No fix available, transitive dependency, low impact",
+          "expires": "2026-12-31T00:00:00.000Z"
+        }
+      }
+    ],
+    "SNYK-DOTNET-EXAMPLE-2024": [
+      {
+        "WebDevSecOps.csproj": {
+          "reason": "False positive, code has proper input validation",
+          "expires": "2026-06-30T00:00:00.000Z"
+        }
+      }
+    ]
+  },
+  "exclude": {
+    "docker": true,
+    "iac": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/api/v1/Usuario"
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": 4,
+      "strNombre": "Nuevo Usuario",
+      "strCorreoElectronico": "nuevo@example.com",
+      "dteFechaRegistro": "2026-06-28T00:00:00",
+      "rowVersion": "GRobHB0eHyA="
+    }
+  }
+}

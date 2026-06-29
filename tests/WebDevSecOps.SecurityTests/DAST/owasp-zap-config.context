@@ -1,0 +1,26 @@
+name=WebDevSecOps
+description=OWASP ZAP context for authenticated scanning of WebDevSecOps
+scope=https?://localhost:5001/*
+isInScope=true
+
+# Authentication: Form-based login
+authentication.method=form
+authentication.loginUrl=https://localhost:5001/Login
+authentication.loginRequestData=user={%username%}&password={%password%}&__RequestVerificationToken={%csrf_token%}
+authentication.loginPageUrl=https://localhost:5001/Login
+authentication.loggedInRegex=\b(Logout|Profile|Dashboard)\b
+authentication.loggedOutRegex=\b(Login|Sign In)\b
+
+# Users for scanning
+users.count=2
+users.0.name=admin
+users.0.password=Admin@123!
+users.1.name=testuser
+users.1.password=Test@123!
+
+# Session management
+sessionManagement.method=cookie
+
+# Technology
+technology.include=ASP.NET Core,SQL Server
+technology.exclude=PHP,WordPress

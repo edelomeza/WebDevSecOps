@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "PUT",
+    "urlPathPattern": "/api/v1/Usuario/[0-9]+"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "message": "Usuario actualizado exitosamente."
+    }
+  }
+}

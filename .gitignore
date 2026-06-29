@@ -1,0 +1,83 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+*.csproj.user
+.vs/
+*.DotSettings.user
+
+# ASP.NET Core
+wwwroot/lib/
+appsettings.*.local*
+appsettings.Development.json
+
+# Secrets
+secrets.*
+*.key
+*.pem
+*.env
+*.pfx
+*.p12
+*.cert
+
+# NuGet
+packages/
+**/[Pp]ackages/*
+*.nupkg
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+
+# Build
+[Bb]uild/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+publish/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.sln.ide/
+*.userprefs
+*.VisualState.xml
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+TestResults/
+
+# Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+*.opencover.xml
+*.trx
+
+# User-specific files
+*.user.*
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini

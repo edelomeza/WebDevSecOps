@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="tests/WebDevSecOps.E2E/WebDevSecOps.E2E.csproj" Id="f933c299-a3d6-4809-8072-e7a60c27d81c" />
+  <Project Path="tests/WebDevSecOps.IntegrationTests/WebDevSecOps.IntegrationTests.csproj" />
+  <Project Path="tests/WebDevSecOps.SecurityTests/WebDevSecOps.SecurityTests.csproj" Id="fba1cac0-51d2-48f1-8bdf-72db96ce73c0" />
+  <Project Path="tests/WebDevSecOps.UnitTests/WebDevSecOps.UnitTests.csproj" />
+  <Project Path="WebDevSecOps/WebDevSecOps.csproj" />
+</Solution>

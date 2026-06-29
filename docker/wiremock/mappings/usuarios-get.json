@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/api/v1/Usuario/[0-9]+"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": 1,
+      "strNombre": "Juan Pérez",
+      "strCorreoElectronico": "juan.perez@example.com",
+      "dteFechaRegistro": "2026-01-15T10:30:00",
+      "rowVersion": "AQIDBAUGBwg="
+    }
+  }
+}

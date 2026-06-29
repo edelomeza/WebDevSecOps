@@ -1,0 +1,26 @@
+100000	IGNORE	Directory Browsing
+10018	WARN	Unnecessary CORS headers
+10021	IGNORE	X-Content-Type-Options header missing
+10027	IGNORE	Information disclosure - suspicious comments
+10094	IGNORE	Information disclosure - base64 encoded
+10095	IGNORE	Information disclosure - backup files
+10096	WARN	Timestamp Disclosure
+10105	WARN	Weak authentication method
+10106	WARN	HTTP Only cookie without HttpOnly flag
+10108	WARN	CSRF token not bound to session
+10202	IGNORE	Absolute URL after base tag
+10038	WARN	Content Security Policy not enforced
+10042	WARN	HTTPS not enforced
+10049	WARN	X-Frame-Options header not set
+10052	WARN	X-Content-Type-Options header missing
+10055	FAIL	CSP: script-src unsafe-inline or unsafe-eval
+10056	FAIL	CSP: object-src not restricted
+10057	FAIL	XSS in HTML/JavaScript
+10058	FAIL	SQL Injection
+10059	FAIL	OS Command Injection
+10060	FAIL	Server-Side Include
+10061	FAIL	LDAP Injection
+10063	FAIL	Path Traversal
+10066	FAIL	Remote File Inclusion
+10067	FAIL	SSRF
+10068	FAIL	Open Redirect

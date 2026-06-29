@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/api/v1/Usuario/(999|0|-1)"
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/problem+json"
+    },
+    "jsonBody": {
+      "type": "https://tools.ietf.org/html/rfc7231#section-6.5.4",
+      "title": "Usuario no encontrado",
+      "status": 404,
+      "detail": "No se encontró un usuario con el ID especificado."
+    }
+  }
+}
