@@ -6,6 +6,7 @@ namespace WebDevSecOps.Models;
 public class UsuarioUpdateViewModel
 {
     [Required]
+    [JsonRequired]
     [JsonPropertyName("id")]
     public int Id { get; set; }
 

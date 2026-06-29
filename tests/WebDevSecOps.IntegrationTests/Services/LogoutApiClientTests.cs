@@ -55,7 +55,7 @@ public class LogoutApiClientTests
     [Fact]
     public async Task LogoutResponse_200Ok_ShouldReturnTrue()
     {
-        var (service, handler) = CreateService("", HttpStatusCode.OK);
+        var (service, _) = CreateService("", HttpStatusCode.OK);
 
         var result = await service.LogoutAsync(ContractTestData.TestToken);
 
@@ -65,7 +65,7 @@ public class LogoutApiClientTests
     [Fact]
     public async Task LogoutResponse_201Created_ShouldReturnTrue()
     {
-        var (service, handler) = CreateService("", HttpStatusCode.Created);
+        var (service, _) = CreateService("", HttpStatusCode.Created);
 
         var result = await service.LogoutAsync(ContractTestData.TestToken);
 
@@ -75,7 +75,7 @@ public class LogoutApiClientTests
     [Fact]
     public async Task LogoutResponse_401Unauthorized_ShouldReturnFalse()
     {
-        var (service, handler) = CreateService("", HttpStatusCode.Unauthorized);
+        var (service, _) = CreateService("", HttpStatusCode.Unauthorized);
 
         var result = await service.LogoutAsync(ContractTestData.TestToken);
 
@@ -85,7 +85,7 @@ public class LogoutApiClientTests
     [Fact]
     public async Task LogoutResponse_500InternalServerError_ShouldReturnFalse()
     {
-        var (service, handler) = CreateService("", HttpStatusCode.InternalServerError);
+        var (service, _) = CreateService("", HttpStatusCode.InternalServerError);
 
         var result = await service.LogoutAsync(ContractTestData.TestToken);
 
@@ -95,7 +95,7 @@ public class LogoutApiClientTests
     [Fact]
     public async Task LogoutResponse_404NotFound_ShouldReturnFalse()
     {
-        var (service, handler) = CreateService("", HttpStatusCode.NotFound);
+        var (service, _) = CreateService("", HttpStatusCode.NotFound);
 
         var result = await service.LogoutAsync(ContractTestData.TestToken);
 

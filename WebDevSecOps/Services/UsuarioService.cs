@@ -91,9 +91,9 @@ public class UsuarioService : IUsuarioService
             var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al crear el usuario.";
             return CreateUsuarioResult.Fail(message);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Create usuario request was cancelled");
+            _logger.LogWarning(ex, "Create usuario request was cancelled");
             throw;
         }
         catch (HttpRequestException ex)
@@ -139,9 +139,9 @@ public class UsuarioService : IUsuarioService
             _logger.LogWarning("Get usuario by id failed with status {StatusCode}", response.StatusCode);
             return null;
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Get usuario by id request was cancelled");
+            _logger.LogWarning(ex, "Get usuario by id request was cancelled");
             throw;
         }
         catch (HttpRequestException ex)
@@ -201,9 +201,9 @@ public class UsuarioService : IUsuarioService
             var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al actualizar el usuario.";
             return CreateUsuarioResult.Fail(message);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Update usuario request was cancelled");
+            _logger.LogWarning(ex, "Update usuario request was cancelled");
             throw;
         }
         catch (HttpRequestException ex)
@@ -263,9 +263,9 @@ public class UsuarioService : IUsuarioService
             var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al eliminar el usuario.";
             return CreateUsuarioResult.Fail(message);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Delete usuario request was cancelled");
+            _logger.LogWarning(ex, "Delete usuario request was cancelled");
             throw;
         }
         catch (HttpRequestException ex)

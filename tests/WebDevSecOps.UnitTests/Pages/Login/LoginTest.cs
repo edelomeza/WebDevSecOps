@@ -336,8 +336,7 @@ public class LoginTest
         var expectedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
         var response = new LoginResponse { Token = expectedToken, ExpiresIn = 3600 };
 
-        var handler = new MockHttpMessageHandler(response, HttpStatusCode.OK);
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new MockHttpMessageHandler(response, HttpStatusCode.OK))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -352,11 +351,9 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ReturnsFailure_WhenApiReturnsUnauthorized()
     {
-        var handler = new MockHttpMessageHandler(
+        var httpClient = new HttpClient(new MockHttpMessageHandler(
             new ErrorResponse { Title = "Unauthorized", Detail = "Credenciales inválidas" },
-            HttpStatusCode.Unauthorized);
-
-        var httpClient = new HttpClient(handler)
+            HttpStatusCode.Unauthorized))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -373,8 +370,7 @@ public class LoginTest
     {
         var response = new LoginResponse { Token = string.Empty, ExpiresIn = 0 };
 
-        var handler = new MockHttpMessageHandler(response, HttpStatusCode.OK);
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new MockHttpMessageHandler(response, HttpStatusCode.OK))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -391,8 +387,7 @@ public class LoginTest
     {
         var response = new LoginResponse { Token = null!, ExpiresIn = 0 };
 
-        var handler = new MockHttpMessageHandler(response, HttpStatusCode.OK);
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new MockHttpMessageHandler(response, HttpStatusCode.OK))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -407,8 +402,7 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ReturnsFailure_OnHttpException()
     {
-        var handler = new MockHttpMessageHandler("", HttpStatusCode.ServiceUnavailable);
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new MockHttpMessageHandler("", HttpStatusCode.ServiceUnavailable))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -423,8 +417,7 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ThrowsOperationCanceledException_WhenCancelled()
     {
-        var handler = new ThrowingHttpMessageHandler(new OperationCanceledException());
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new ThrowingHttpMessageHandler(new OperationCanceledException()))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -438,8 +431,7 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ReturnsFailure_OnGenericException()
     {
-        var handler = new ThrowingHttpMessageHandler(new InvalidOperationException("Unexpected error"));
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new ThrowingHttpMessageHandler(new InvalidOperationException("Unexpected error")))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -454,11 +446,9 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ReturnsFailure_WhenErrorResponseMissingDetail()
     {
-        var handler = new MockHttpMessageHandler(
+        var httpClient = new HttpClient(new MockHttpMessageHandler(
             new ErrorResponse { Title = "Custom error", Detail = "" },
-            HttpStatusCode.BadRequest);
-
-        var httpClient = new HttpClient(handler)
+            HttpStatusCode.BadRequest))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -473,11 +463,9 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ReturnsFailure_WhenErrorResponseHasNoFields()
     {
-        var handler = new MockHttpMessageHandler(
+        var httpClient = new HttpClient(new MockHttpMessageHandler(
             new ErrorResponse { Title = "", Detail = "" },
-            HttpStatusCode.BadRequest);
-
-        var httpClient = new HttpClient(handler)
+            HttpStatusCode.BadRequest))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -492,8 +480,7 @@ public class LoginTest
     [Fact]
     public async Task LoginAsync_ReturnsFailure_WhenErrorResponseIsInvalidJson()
     {
-        var handler = new MockHttpMessageHandler("not-json-at-all", HttpStatusCode.BadRequest);
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new MockHttpMessageHandler("not-json-at-all", HttpStatusCode.BadRequest))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -548,8 +535,7 @@ public class LoginTest
     [Fact]
     public async Task LogoutAsync_ReturnsFalse_OnApiError()
     {
-        var handler = new MockHttpMessageHandler("", HttpStatusCode.InternalServerError);
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new MockHttpMessageHandler("", HttpStatusCode.InternalServerError))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };
@@ -563,8 +549,7 @@ public class LoginTest
     [Fact]
     public async Task LogoutAsync_ReturnsFalse_OnException()
     {
-        var handler = new ThrowingHttpMessageHandler(new HttpRequestException("Network error"));
-        var httpClient = new HttpClient(handler)
+        var httpClient = new HttpClient(new ThrowingHttpMessageHandler(new HttpRequestException("Network error")))
         {
             BaseAddress = new Uri(TestConstants.ApiBaseUrl)
         };

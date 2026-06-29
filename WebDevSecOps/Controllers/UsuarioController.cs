@@ -21,6 +21,9 @@ public class UsuarioController : Controller
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var result = await _usuarioService.GetUsuariosAsync(pageNumber, pageSize);
 
         if (result is null)
@@ -36,6 +39,9 @@ public class UsuarioController : Controller
     [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> Details(int id, CancellationToken ct, string? returnUrl = null)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var usuario = await _usuarioService.GetUsuarioByIdAsync(id, ct);
 
         if (usuario is null)
@@ -116,6 +122,9 @@ public class UsuarioController : Controller
     [HttpGet]
     public async Task<IActionResult> Update(int id, CancellationToken ct, string? returnUrl = null)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var usuario = await _usuarioService.GetUsuarioByIdAsync(id, ct);
 
         if (usuario is null)
@@ -196,6 +205,9 @@ public class UsuarioController : Controller
     [HttpGet]
     public async Task<IActionResult> Delete(int id, CancellationToken ct, string? returnUrl = null)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var usuario = await _usuarioService.GetUsuarioByIdAsync(id, ct);
 
         if (usuario is null)

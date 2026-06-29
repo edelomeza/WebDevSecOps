@@ -43,9 +43,9 @@ public class AuthService : IAuthService
                 : (errorResponse?.Title ?? "Credenciales inválidas");
             return LoginResult.Failure(errorMessage);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException ex)
         {
-            _logger.LogWarning("Login request was cancelled");
+            _logger.LogWarning(ex, "Login request was cancelled");
             throw;
         }
         catch (HttpRequestException ex)

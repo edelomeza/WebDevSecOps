@@ -12,8 +12,6 @@ namespace WebDevSecOps.IntegrationTests.Services;
 
 public class UsuarioApiClientTests
 {
-    private readonly Mock<ILogger<UsuarioService>> _loggerMock = new();
-
     // ========================================================================
     // GET /api/v1/Usuario?PageNumber=&PageSize=
     // ========================================================================
@@ -44,7 +42,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarios_ShouldReturnPaginatedResponse_WhenApiSucceeds()
     {
-        var (service, handler) = CreateServiceWithToken(ContractTestData.ValidPaginatedResponse, HttpStatusCode.OK);
+        var (service, _) = CreateServiceWithToken(ContractTestData.ValidPaginatedResponse, HttpStatusCode.OK);
 
         var result = await service.GetUsuariosAsync();
 
@@ -60,7 +58,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarios_ShouldReturnEmptyList_WhenApiReturnsNoItems()
     {
-        var (service, handler) = CreateServiceWithToken(ContractTestData.EmptyPaginatedResponse, HttpStatusCode.OK);
+        var (service, _) = CreateServiceWithToken(ContractTestData.EmptyPaginatedResponse, HttpStatusCode.OK);
 
         var result = await service.GetUsuariosAsync();
 
@@ -72,7 +70,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarios_ShouldReturnNull_WhenApiReturnsServerError()
     {
-        var (service, handler) = CreateServiceWithToken("", HttpStatusCode.InternalServerError);
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.InternalServerError);
 
         var result = await service.GetUsuariosAsync();
 
@@ -82,7 +80,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarios_ShouldReturnNull_WhenMissingToken()
     {
-        var (service, handler) = CreateServiceWithoutToken();
+        var (service, _) = CreateServiceWithoutToken();
 
         var result = await service.GetUsuariosAsync();
 
@@ -119,7 +117,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarioById_ShouldReturnUsuario_WhenApiSucceeds()
     {
-        var (service, handler) = CreateServiceWithToken(ContractTestData.ValidUsuario, HttpStatusCode.OK);
+        var (service, _) = CreateServiceWithToken(ContractTestData.ValidUsuario, HttpStatusCode.OK);
 
         var result = await service.GetUsuarioByIdAsync(1);
 
@@ -133,7 +131,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarioById_ShouldReturnNull_WhenApiReturns404()
     {
-        var (service, handler) = CreateServiceWithToken("", HttpStatusCode.NotFound);
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.NotFound);
 
         var result = await service.GetUsuarioByIdAsync(999);
 
@@ -143,7 +141,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarioById_ShouldReturnNull_WhenApiReturnsServerError()
     {
-        var (service, handler) = CreateServiceWithToken("", HttpStatusCode.InternalServerError);
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.InternalServerError);
 
         var result = await service.GetUsuarioByIdAsync(1);
 
@@ -153,7 +151,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task GetUsuarioById_ShouldReturnNull_WhenMissingToken()
     {
-        var (service, handler) = CreateServiceWithoutToken();
+        var (service, _) = CreateServiceWithoutToken();
 
         var result = await service.GetUsuarioByIdAsync(1);
 
@@ -218,7 +216,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task CreateUsuario_ShouldReturnOk_WhenApiSucceeds()
     {
-        var (service, handler) = CreateServiceWithToken("", HttpStatusCode.OK);
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.OK);
 
         var result = await service.CreateUsuarioAsync(ContractTestData.ValidCreateViewModel);
 
@@ -230,7 +228,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task CreateUsuario_ShouldReturnFailureWithFieldErrors_WhenApiReturnsValidationError()
     {
-        var (service, handler) = CreateServiceWithToken(ContractTestData.ValidationApiError, HttpStatusCode.BadRequest);
+        var (service, _) = CreateServiceWithToken(ContractTestData.ValidationApiError, HttpStatusCode.BadRequest);
 
         var result = await service.CreateUsuarioAsync(ContractTestData.ValidCreateViewModel);
 
@@ -243,7 +241,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task CreateUsuario_ShouldReturnFailure_WhenMissingToken()
     {
-        var (service, handler) = CreateServiceWithoutToken();
+        var (service, _) = CreateServiceWithoutToken();
 
         var result = await service.CreateUsuarioAsync(ContractTestData.ValidCreateViewModel);
 
@@ -289,7 +287,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task UpdateUsuario_ShouldReturnOk_WhenApiSucceeds()
     {
-        var (service, handler) = CreateServiceWithToken("", HttpStatusCode.OK);
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.OK);
 
         var result = await service.UpdateUsuarioAsync(1, ContractTestData.ValidUpdateViewModel);
 
@@ -300,7 +298,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task UpdateUsuario_ShouldReturnConflictMessage_WhenApiReturns409()
     {
-        var (service, handler) = CreateServiceWithToken(ContractTestData.ConflictApiError, HttpStatusCode.Conflict);
+        var (service, _) = CreateServiceWithToken(ContractTestData.ConflictApiError, HttpStatusCode.Conflict);
 
         var result = await service.UpdateUsuarioAsync(1, ContractTestData.ValidUpdateViewModel);
 
@@ -311,7 +309,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task UpdateUsuario_ShouldReturnFailure_WhenMissingToken()
     {
-        var (service, handler) = CreateServiceWithoutToken();
+        var (service, _) = CreateServiceWithoutToken();
 
         var result = await service.UpdateUsuarioAsync(1, ContractTestData.ValidUpdateViewModel);
 
@@ -354,7 +352,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task DeleteUsuario_ShouldReturnOk_WhenApiSucceeds()
     {
-        var (service, handler) = CreateServiceWithToken("", HttpStatusCode.OK);
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.OK);
 
         var result = await service.DeleteUsuarioAsync(1, ContractTestData.ValidUsuario.RowVersion!);
 
@@ -365,7 +363,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task DeleteUsuario_ShouldReturnConflictMessage_WhenApiReturns409()
     {
-        var (service, handler) = CreateServiceWithToken(ContractTestData.ConflictApiError, HttpStatusCode.Conflict);
+        var (service, _) = CreateServiceWithToken(ContractTestData.ConflictApiError, HttpStatusCode.Conflict);
 
         var result = await service.DeleteUsuarioAsync(1, ContractTestData.ValidUsuario.RowVersion!);
 
@@ -376,7 +374,7 @@ public class UsuarioApiClientTests
     [Fact]
     public async Task DeleteUsuario_ShouldReturnFailure_WhenMissingToken()
     {
-        var (service, handler) = CreateServiceWithoutToken();
+        var (service, _) = CreateServiceWithoutToken();
 
         var result = await service.DeleteUsuarioAsync(1, ContractTestData.ValidUsuario.RowVersion!);
 
