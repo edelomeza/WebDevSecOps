@@ -46,7 +46,7 @@ public class AuthService : IAuthService
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Login request was cancelled");
-            throw;
+            throw new OperationCanceledException("The login request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {

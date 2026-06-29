@@ -94,7 +94,7 @@ public class UsuarioService : IUsuarioService
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Create usuario request was cancelled");
-            throw;
+            throw new OperationCanceledException("The create usuario request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
@@ -142,7 +142,7 @@ public class UsuarioService : IUsuarioService
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Get usuario by id request was cancelled");
-            throw;
+            throw new OperationCanceledException("The get usuario by id request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
@@ -204,7 +204,7 @@ public class UsuarioService : IUsuarioService
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Update usuario request was cancelled");
-            throw;
+            throw new OperationCanceledException("The update usuario request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
@@ -266,7 +266,7 @@ public class UsuarioService : IUsuarioService
         catch (OperationCanceledException ex)
         {
             _logger.LogWarning(ex, "Delete usuario request was cancelled");
-            throw;
+            throw new OperationCanceledException("The delete usuario request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
