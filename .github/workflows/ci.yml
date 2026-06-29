@@ -90,13 +90,13 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results
           path: "**/*.trx"
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-artifact
           path: ./publish
@@ -198,7 +198,7 @@ jobs:
             --logger "trx;LogFileName=security-sast.trx"
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-reports
           path: ./coverage
@@ -246,7 +246,7 @@ jobs:
         run: snyk test --severity-threshold=high --json > snyk-report.json
 
       - name: Upload Snyk report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snyk-report
           path: snyk-report.json
