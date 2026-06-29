@@ -332,7 +332,7 @@ jobs:
           rules_file_name: tests/WebDevSecOps.SecurityTests/DAST/zap-baseline-rules.tsv
           cmd_options: >
             -c tests/WebDevSecOps.SecurityTests/DAST/owasp-zap-config.context
-          allow_issue_writing: true
+          allow_issue_writing: false
           artifact_name: zap-report
           fail_action: false
 
