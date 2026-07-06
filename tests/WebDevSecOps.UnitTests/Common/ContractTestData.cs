@@ -201,6 +201,99 @@ public static class ContractTestData
     // Constantes
     // ========================================================================
 
+    // ========================================================================
+    // Empleado domain model
+    // ========================================================================
+
+    public static EmpCatTipoEmpleado ValidTipoEmpleado => new()
+    {
+        Id = 1,
+        StrValor = "Administrativo",
+        StrDescripcion = "Personal administrativo"
+    };
+
+    public static Empleado ValidEmpleado => new()
+    {
+        Id = 1,
+        StrNombre = "Carlos Lopez",
+        StrAPaterno = "Lopez",
+        StrAMaterno = "Garcia",
+        StrCURP = "LOPC800101HDFRRN09",
+        IdEmpCatTipoEmpleado = 1,
+        RowVersion = _rowVersion
+    };
+
+    public static PaginatedResponse<Empleado> ValidEmpleadoPaginatedResponse => new()
+    {
+        Items = [ValidEmpleado],
+        TotalCount = 1,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 1
+    };
+
+    public static PaginatedResponse<Empleado> EmptyEmpleadoPaginatedResponse => new()
+    {
+        Items = [],
+        TotalCount = 0,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 0
+    };
+
+    public static PaginatedResponse<EmpCatTipoEmpleado> ValidTipoEmpleadoPaginatedResponse => new()
+    {
+        Items = [ValidTipoEmpleado],
+        TotalCount = 1,
+        PageNumber = 1,
+        PageSize = 100,
+        TotalPages = 1
+    };
+
+    public static EmpleadoCreateViewModel ValidEmpleadoCreateViewModel => new()
+    {
+        StrNombre = "Nuevo Empleado",
+        StrAPaterno = "Paterno",
+        StrAMaterno = "Materno",
+        StrCURP = "XXXX000101HDFRRN09",
+        IdEmpCatTipoEmpleado = 1
+    };
+
+    public static EmpleadoUpdateViewModel ValidEmpleadoUpdateViewModel => new()
+    {
+        Id = 1,
+        StrNombre = "Empleado Actualizado",
+        StrAPaterno = "Paterno",
+        StrAMaterno = "Materno",
+        StrCURP = "XXXX000101HDFRRN09",
+        IdEmpCatTipoEmpleado = 1,
+        RowVersion = _rowVersion
+    };
+
+    public static object ValidEmpleadoDeleteRequestBody => new
+    {
+        id = 1,
+        rowVersion = _rowVersion
+    };
+
+    public static ApiErrorResponse EmpleadoValidationApiError => new()
+    {
+        Title = "Validation Error",
+        Detail = "One or more validation errors occurred.",
+        Status = 400,
+        Errors = new Dictionary<string, string[]>
+        {
+            ["strNombre"] = ["El nombre es obligatorio."]
+        }
+    };
+
+    public static ApiErrorResponse EmpleadoConflictApiError => new()
+    {
+        Title = "Conflict",
+        Detail = "The record was modified by another user.",
+        Status = 409
+    };
+
     public const string TestToken = "eyJhbGciOiJIUzI1NiJ9.dGVzdC1kYXRhLW5vdC1hLXJlYWwtc2VjcmV0";
     public const string ConflictMessage = "El registro fue modificado por otro usuario. Recargue la p\u00e1gina e intente nuevamente.";
     public const string MissingTokenMessage = "Error de autenticaci\u00f3n. Inicie sesi\u00f3n nuevamente.";

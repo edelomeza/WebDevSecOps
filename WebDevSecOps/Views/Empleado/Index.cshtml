@@ -1,0 +1,129 @@
+@model PaginatedResponse<Empleado>
+@{
+    ViewData["Title"] = "Empleados";
+    var currentQuery = Context.Request.Query;
+    var texto = currentQuery["texto"].FirstOrDefault();
+    var idTipoEmpleado = currentQuery["idTipoEmpleado"].FirstOrDefault();
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Empleados</h2>
+        <a class="btn btn-primary" asp-action="Create" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">+ Agregar Empleado</a>
+    </div>
+
+    <form method="get" action="/Empleado/Index" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="texto" class="form-control" placeholder="Buscar por nombre..." value="@texto" />
+        </div>
+        <div class="col-md-3">
+            <select name="idTipoEmpleado" class="form-select">
+                <option value="">Todos los tipos</option>
+                @if (ViewBag.TipoEmpleadoList is not null)
+                {
+                    foreach (var item in ViewBag.TipoEmpleadoList)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == idTipoEmpleado)">@item.Text</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+        </div>
+        <div class="col-md-2">
+            <a href="/Empleado/Index" class="btn btn-outline-secondary w-100">Limpiar</a>
+        </div>
+    </form>
+
+    @if (Model?.Items is null || Model.Items.Count == 0)
+    {
+        <div class="alert alert-info">No se encontraron empleados.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">A. Paterno</th>
+                        <th scope="col">A. Materno</th>
+                        <th scope="col">CURP</th>
+                        <th scope="col">Tipo Empleado</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var empleado in Model.Items)
+                    {
+                        <tr>
+                            <td>@empleado.StrNombre</td>
+                            <td>@empleado.StrAPaterno</td>
+                            <td>@empleado.StrAMaterno</td>
+                            <td>@empleado.StrCURP</td>
+                            @{
+                                var tipoValor = "-";
+                                if (empleado.IdEmpCatTipoEmpleado.HasValue)
+                                {
+                                    var idTipo = empleado.IdEmpCatTipoEmpleado.GetValueOrDefault();
+                                    if (ViewBag.TipoEmpleadoDict.ContainsKey(idTipo))
+                                    {
+                                        tipoValor = ViewBag.TipoEmpleadoDict[idTipo];
+                                    }
+                                }
+                            }
+                            <td>@tipoValor</td>
+                            <td>
+                                <a class="btn btn-sm btn-info" asp-action="Details" asp-route-id="@empleado.Id" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Detalles</a>
+                                <a class="btn btn-sm btn-warning" asp-action="Update" asp-route-id="@empleado.Id" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Actualizar</a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@empleado.Id" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Eliminar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="Navegacion de empleados">
+            <ul class="pagination justify-content-center">
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Empleado/Index?texto=@texto&idTipoEmpleado=@idTipoEmpleado&pageNumber=@(Model.PageNumber - 1)&pageSize=@Model.PageSize">Anterior</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">Anterior</span>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="/Empleado/Index?texto=@texto&idTipoEmpleado=@idTipoEmpleado&pageNumber=@i&pageSize=@Model.PageSize">@i</a>
+                    </li>
+                }
+
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Empleado/Index?texto=@texto&idTipoEmpleado=@idTipoEmpleado&pageNumber=@(Model.PageNumber + 1)&pageSize=@Model.PageSize">Siguiente</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">Siguiente</span>
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        <p class="text-center text-muted small">
+            Mostrando pagina @Model.PageNumber de @Model.TotalPages (@Model.TotalCount registros)
+        </p>
+    }
+</div>

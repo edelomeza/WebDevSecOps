@@ -1,0 +1,121 @@
+@model EmpleadoCreateViewModel
+@{
+    ViewData["Title"] = "Agregar Empleado";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Agregar Empleado</h2>
+
+            @{
+                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+            }
+            @if (generalErrors is { Count: > 0 })
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @foreach (var error in generalErrors)
+                    {
+                        <p class="mb-0">@error.ErrorMessage</p>
+                    }
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <div class="mb-3">
+                    <label asp-for="StrNombre" class="form-label"></label>
+                    <input asp-for="StrNombre" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrNombre" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrAPaterno" class="form-label"></label>
+                    <input asp-for="StrAPaterno" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrAPaterno" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrAMaterno" class="form-label"></label>
+                    <input asp-for="StrAMaterno" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrAMaterno" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrCURP" class="form-label"></label>
+                    <input asp-for="StrCURP" class="form-control" autocomplete="off" maxlength="18" />
+                    <span asp-validation-for="StrCURP" class="text-danger"></span>
+                    <div id="curpFeedback" class="form-text"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IdEmpCatTipoEmpleado" class="form-label"></label>
+                    <select asp-for="IdEmpCatTipoEmpleado" class="form-select" asp-items="ViewBag.TipoEmpleadoList">
+                        <option value="">Seleccione un tipo</option>
+                    </select>
+                    <span asp-validation-for="IdEmpCatTipoEmpleado" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])">
+        (function () {
+            var nombreInput = document.getElementById('StrNombre');
+            if (nombreInput) {
+                nombreInput.addEventListener('input', function () {
+                    var val = nombreInput.value;
+                    var nombreRegex = /^[a-zA-Z0-9_ ]+$/;
+                    if (val.length > 0 && !nombreRegex.test(val)) {
+                        nombreInput.setCustomValidity('Solo letras, numeros, espacios y guion bajo');
+                        nombreInput.classList.add('is-invalid');
+                    } else {
+                        nombreInput.setCustomValidity('');
+                        nombreInput.classList.remove('is-invalid');
+                        if (val.length > 0) nombreInput.classList.add('is-valid');
+                    }
+                });
+            }
+
+            var curpInput = document.getElementById('StrCURP');
+            var curpFeedback = document.getElementById('curpFeedback');
+            if (curpInput && curpFeedback) {
+                curpInput.addEventListener('input', function () {
+                    var val = curpInput.value;
+                    if (val.length === 0) {
+                        curpFeedback.textContent = '';
+                        curpFeedback.className = 'form-text';
+                    } else if (val.length < 18) {
+                        curpFeedback.textContent = 'CURP debe tener 18 caracteres (faltan ' + (18 - val.length) + ')';
+                        curpFeedback.className = 'form-text text-danger';
+                    } else {
+                        curpFeedback.textContent = 'Longitud correcta';
+                        curpFeedback.className = 'form-text text-success';
+                    }
+                });
+            }
+
+            var form = document.querySelector('form.needs-validation');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                });
+            }
+        })();
+    </script>
+}
