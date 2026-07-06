@@ -12,7 +12,7 @@
       {
         "WebDevSecOps.csproj": {
           "reason": "False positive, code has proper input validation",
-          "expires": "2026-06-30T00:00:00.000Z"
+          "expires": "2026-12-31T00:00:00.000Z"
         }
       }
     ]

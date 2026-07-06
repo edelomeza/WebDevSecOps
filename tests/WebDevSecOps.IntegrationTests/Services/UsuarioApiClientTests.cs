@@ -88,6 +88,98 @@ public class UsuarioApiClientTests
     }
 
     // ========================================================================
+    // GET /api/v1/Usuario/buscar?texto=&PageNumber=&PageSize=
+    // ========================================================================
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldGetCorrectUrlWithSearchTextAndPagination()
+    {
+        var (service, handler) = CreateServiceWithToken();
+
+        await service.BuscarUsuariosAsync("Juan", pageNumber: 2, pageSize: 25);
+
+        Assert.Equal(HttpMethod.Get, handler.LastRequest?.Method);
+        Assert.Equal("api/v1/Usuario/buscar?texto=Juan&PageNumber=2&PageSize=25", handler.LastRequest?.RequestUri?.PathAndQuery.TrimStart('/'));
+    }
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldIncludeBearerToken()
+    {
+        var (service, handler) = CreateServiceWithToken();
+
+        await service.BuscarUsuariosAsync("test");
+
+        Assert.NotNull(handler.LastRequest?.Headers.Authorization);
+        Assert.Equal("Bearer", handler.LastRequest.Headers.Authorization.Scheme);
+        Assert.Equal(ContractTestData.TestToken, handler.LastRequest.Headers.Authorization.Parameter);
+    }
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldReturnPaginatedResponse_WhenApiSucceeds()
+    {
+        var (service, _) = CreateServiceWithToken(ContractTestData.ValidPaginatedResponse, HttpStatusCode.OK);
+
+        var result = await service.BuscarUsuariosAsync("Juan");
+
+        Assert.NotNull(result);
+        Assert.Single(result.Items);
+        Assert.Equal(1, result.TotalCount);
+        Assert.Equal(1, result.PageNumber);
+        Assert.Equal(10, result.PageSize);
+        Assert.Equal(1, result.TotalPages);
+        Assert.Equal(ContractTestData.ValidUsuario.StrNombre, result.Items[0].StrNombre);
+    }
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldReturnEmptyList_WhenApiReturnsNoItems()
+    {
+        var (service, _) = CreateServiceWithToken(ContractTestData.EmptyPaginatedResponse, HttpStatusCode.OK);
+
+        var result = await service.BuscarUsuariosAsync("NoExiste");
+
+        Assert.NotNull(result);
+        Assert.Empty(result.Items);
+        Assert.Equal(0, result.TotalCount);
+    }
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldReturnNull_WhenApiReturnsServerError()
+    {
+        var (service, _) = CreateServiceWithToken("", HttpStatusCode.InternalServerError);
+
+        var result = await service.BuscarUsuariosAsync("test");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldReturnNull_WhenMissingToken()
+    {
+        var (service, _) = CreateServiceWithoutToken();
+
+        var result = await service.BuscarUsuariosAsync("test");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task BuscarUsuarios_ShouldUrlEncodeSearchText()
+    {
+        var (service, handler) = CreateServiceWithToken();
+
+        await service.BuscarUsuariosAsync("María José & Cía.");
+
+        var path = handler.LastRequest?.RequestUri?.PathAndQuery.TrimStart('/');
+        Assert.NotNull(path);
+        Assert.Contains("api/v1/Usuario/buscar?texto=", path);
+        var query = path.Substring(path.IndexOf('?') + 1);
+        var pairs = query.Split('&');
+        var textoPair = pairs.First(p => p.StartsWith("texto=", StringComparison.Ordinal));
+        var textoValue = textoPair.Substring(6);
+        Assert.Equal("Mar%C3%ADa%20Jos%C3%A9%20%26%20C%C3%ADa.", textoValue);
+    }
+
+    // ========================================================================
     // GET /api/v1/Usuario/{id}
     // ========================================================================
 

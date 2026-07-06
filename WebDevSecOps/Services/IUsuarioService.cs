@@ -6,6 +6,8 @@ public interface IUsuarioService
 {
     Task<PaginatedResponse<Usuario>?> GetUsuariosAsync(int pageNumber = 1, int pageSize = 10, CancellationToken ct = default);
 
+    Task<PaginatedResponse<Usuario>?> BuscarUsuariosAsync(string texto, int pageNumber = 1, int pageSize = 10, CancellationToken ct = default);
+
     Task<CreateUsuarioResult> CreateUsuarioAsync(UsuarioCreateViewModel model, CancellationToken ct = default);
 
     Task<Usuario?> GetUsuarioByIdAsync(int id, CancellationToken ct = default);

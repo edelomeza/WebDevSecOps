@@ -18,13 +18,16 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
-    public async Task<IActionResult> Index(int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(string? searchString = null, int pageNumber = 1, int pageSize = 10)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var result = await _usuarioService.GetUsuariosAsync(pageNumber, pageSize);
+        ViewData["SearchString"] = searchString;
+
+        var result = string.IsNullOrWhiteSpace(searchString)
+            ? await _usuarioService.GetUsuariosAsync(pageNumber, pageSize)
+            : await _usuarioService.BuscarUsuariosAsync(searchString, pageNumber, pageSize);
 
         if (result is null)
         {

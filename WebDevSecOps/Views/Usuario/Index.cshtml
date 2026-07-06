@@ -1,6 +1,7 @@
 @model PaginatedResponse<Usuario>
 @{
     ViewData["Title"] = "Usuarios";
+    var searchString = ViewData["SearchString"] as string;
 }
 
 <div class="container">
@@ -9,9 +10,52 @@
         <a class="btn btn-primary" asp-action="Create" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">+ Agregar Usuario</a>
     </div>
 
+    <form method="get" class="row g-2 mb-4" role="search">
+        <div class="col-auto flex-grow-1">
+            <div class="input-group">
+                <input type="search"
+                       class="form-control"
+                       name="searchString"
+                       id="searchString"
+                       value="@searchString"
+                       placeholder="Buscar por nombre..."
+                       aria-label="Buscar por nombre"
+                       maxlength="100">
+                <button type="submit" class="btn btn-outline-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                    </svg>
+                    Buscar
+                </button>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(searchString))
+        {
+            <div class="col-auto">
+                <a class="btn btn-outline-secondary" asp-action="Index">Limpiar</a>
+            </div>
+        }
+    </form>
+
+    @if (!string.IsNullOrEmpty(searchString))
+    {
+        <div class="alert alert-info py-2 mb-3">
+            <strong>Filtrado por:</strong> "@searchString"
+        </div>
+    }
+
     @if (Model?.Items is null || Model.Items.Count == 0)
     {
-        <div class="alert alert-info">No se encontraron usuarios.</div>
+        <div class="alert alert-info">
+            @if (!string.IsNullOrEmpty(searchString))
+            {
+                <text>No se encontraron usuarios que coincidan con "@searchString".</text>
+            }
+            else
+            {
+                <text>No se encontraron usuarios.</text>
+            }
+        </div>
     }
     else
     {
@@ -46,7 +90,7 @@
                 @if (Model.PageNumber > 1)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="/Usuario/Index?pageNumber=@(Model.PageNumber - 1)&amp;pageSize=@Model.PageSize">Anterior</a>
+                        <a class="page-link" href="/Usuario/Index?searchString=@(searchString)&amp;pageNumber=@(Model.PageNumber - 1)&amp;pageSize=@Model.PageSize">Anterior</a>
                     </li>
                 }
                 else
@@ -59,14 +103,14 @@
                 @for (int i = 1; i <= Model.TotalPages; i++)
                 {
                     <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" href="/Usuario/Index?pageNumber=@i&amp;pageSize=@Model.PageSize">@i</a>
+                        <a class="page-link" href="/Usuario/Index?searchString=@(searchString)&amp;pageNumber=@i&amp;pageSize=@Model.PageSize">@i</a>
                     </li>
                 }
 
                 @if (Model.PageNumber < Model.TotalPages)
                 {
                     <li class="page-item">
-                        <a class="page-link" href="/Usuario/Index?pageNumber=@(Model.PageNumber + 1)&amp;pageSize=@Model.PageSize">Siguiente</a>
+                        <a class="page-link" href="/Usuario/Index?searchString=@(searchString)&amp;pageNumber=@(Model.PageNumber + 1)&amp;pageSize=@Model.PageSize">Siguiente</a>
                     </li>
                 }
                 else
