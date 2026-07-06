@@ -79,7 +79,7 @@ public class EmpleadoUpdateTests
 
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("Index", redirectResult.ActionName);
-        Assert.Equal("Operación exitosa!!", controller.TempData["Success"]);
+        Assert.Equal("Empleado actualizado exitosamente.", controller.TempData["Success"]);
     }
 
     [Fact]

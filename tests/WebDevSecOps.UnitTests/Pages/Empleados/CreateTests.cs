@@ -72,7 +72,7 @@ public class EmpleadoCreateTests
 
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("Index", redirectResult.ActionName);
-        Assert.Equal("Operación exitosa!!", controller.TempData["Success"]);
+        Assert.Equal("Empleado creado exitosamente.", controller.TempData["Success"]);
     }
 
     [Fact]

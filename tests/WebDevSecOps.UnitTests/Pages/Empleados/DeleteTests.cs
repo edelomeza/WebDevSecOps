@@ -86,7 +86,7 @@ public class EmpleadoDeleteTests
 
         var redirectResult = Assert.IsType<RedirectToActionResult>(result);
         Assert.Equal("Index", redirectResult.ActionName);
-        Assert.Equal("Operación exitosa!!", controller.TempData["Success"]);
+        Assert.Equal("Empleado eliminado exitosamente.", controller.TempData["Success"]);
     }
 
     [Fact]
