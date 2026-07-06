@@ -145,3 +145,56 @@ Se reemplazaron las alertas estáticas por notificaciones **toastr** con auto-di
 - Build: 0 errores
 - Create, Update, Delete exitosos → toastr success
 - Errores del servidor → toastr error
+
+---
+
+## Fase 6 — Convención de Manejo de Excepciones
+
+### Fecha
+2026-07-06
+
+### Problema
+CodeQL reportó 7 alertas `cs/catch-of-all-exceptions` en `UsuarioService.cs` y `AuthService.cs` por uso de `catch (Exception)` sin catches específicos previos.
+
+### Solución
+Establecer convención de manejo de excepciones en capa de servicios HTTP, aplicando catches específicos de arriba a abajo:
+
+```csharp
+// 1. Cancelación de request (re-throw preserva la excepción)
+catch (OperationCanceledException ex)
+{
+    _logger.LogWarning(ex, "Request was cancelled");
+    throw new OperationCanceledException("The request was cancelled.", ex);
+}
+
+// 2. Errores de conexión HTTP
+catch (HttpRequestException ex)
+{
+    _logger.LogError(ex, "Connection error while calling API");
+    return [error controlado];
+}
+
+// 3. Fallback para errores inesperados
+catch (Exception ex)
+{
+    _logger.LogError(ex, "Unexpected error");
+    return [error controlado];
+}
+```
+
+### Reglas
+- **`OperationCanceledException`**: siempre re-throw (no tragar cancelaciones)
+- **`HttpRequestException`**: log + retorno de error controlado (el usuario puede reintentar)
+- **`Exception`**: solo como fallback final, log + retorno de error
+- Si el método **no recibe `CancellationToken`**, omitir el catch de `OperationCanceledException`
+
+### Archivos modificados
+
+| Archivo | Métodos corregidos |
+|---------|-------------------|
+| `UsuarioService.cs` | `GetUsuariosAsync`, `BuscarUsuariosAsync` |
+| `AuthService.cs` | `LogoutAsync` |
+
+### Verificación
+- Build: 0 errores
+- Alertas CodeQL #74-80 resueltas
