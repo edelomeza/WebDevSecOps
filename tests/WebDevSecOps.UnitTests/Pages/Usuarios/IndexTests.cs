@@ -174,6 +174,121 @@ public class IndexTests
     }
 
     [Fact]
+    public async Task Index_PassesSearchStringToService_WhenSearchProvided()
+    {
+        var (controller, serviceMock, _) = CreateController();
+
+        var usuarios = new List<Usuario>
+        {
+            new() { Id = 1, StrNombre = "Juan Pérez", StrCorreoElectronico = "juan@test.com", DteFechaRegistro = new DateTime(2025, 1, 15, 0, 0, 0, DateTimeKind.Utc) }
+        };
+        var expectedResponse = new PaginatedResponse<Usuario>
+        {
+            Items = usuarios,
+            TotalCount = 1,
+            PageNumber = 1,
+            PageSize = 10,
+            TotalPages = 1
+        };
+
+        var capturedTexto = string.Empty;
+        serviceMock
+            .Setup(x => x.BuscarUsuariosAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Callback<string, int, int, CancellationToken>((texto, pn, ps, _) => capturedTexto = texto)
+            .ReturnsAsync(expectedResponse);
+
+        await controller.Index(searchString: "Juan");
+
+        Assert.Equal("Juan", capturedTexto);
+    }
+
+    [Fact]
+    public async Task Index_UsesGetUsuarios_WhenSearchStringIsEmpty()
+    {
+        var (controller, serviceMock, _) = CreateController();
+
+        serviceMock
+            .Setup(x => x.GetUsuariosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PaginatedResponse<Usuario>());
+
+        await controller.Index(searchString: "");
+
+        serviceMock.Verify(x => x.BuscarUsuariosAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+        serviceMock.Verify(x => x.GetUsuariosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Index_UsesGetUsuarios_WhenSearchStringIsNull()
+    {
+        var (controller, serviceMock, _) = CreateController();
+
+        serviceMock
+            .Setup(x => x.GetUsuariosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PaginatedResponse<Usuario>());
+
+        await controller.Index();
+
+        serviceMock.Verify(x => x.BuscarUsuariosAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+        serviceMock.Verify(x => x.GetUsuariosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Index_UsesGetUsuarios_WhenSearchStringIsWhitespace()
+    {
+        var (controller, serviceMock, _) = CreateController();
+
+        serviceMock
+            .Setup(x => x.GetUsuariosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PaginatedResponse<Usuario>());
+
+        await controller.Index(searchString: "   ");
+
+        serviceMock.Verify(x => x.BuscarUsuariosAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+        serviceMock.Verify(x => x.GetUsuariosAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Index_SearchWithPagination_CombinesBothParams()
+    {
+        var (controller, serviceMock, _) = CreateController();
+
+        var capturedTexto = string.Empty;
+        var capturedPageNumber = 0;
+        var capturedPageSize = 0;
+
+        serviceMock
+            .Setup(x => x.BuscarUsuariosAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .Callback<string, int, int, CancellationToken>((texto, pn, ps, _) =>
+            {
+                capturedTexto = texto;
+                capturedPageNumber = pn;
+                capturedPageSize = ps;
+            })
+            .ReturnsAsync(new PaginatedResponse<Usuario>());
+
+        await controller.Index(searchString: "Maria", pageNumber: 3, pageSize: 25);
+
+        Assert.Equal("Maria", capturedTexto);
+        Assert.Equal(3, capturedPageNumber);
+        Assert.Equal(25, capturedPageSize);
+    }
+
+    [Fact]
+    public async Task Index_ReturnsViewWithSearchStringInViewData_WhenSearching()
+    {
+        var (controller, serviceMock, _) = CreateController();
+
+        serviceMock
+            .Setup(x => x.BuscarUsuariosAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PaginatedResponse<Usuario>());
+
+        var result = await controller.Index(searchString: "Pedro");
+
+        var viewResult = Assert.IsType<ViewResult>(result);
+        Assert.Equal("Pedro", viewResult.ViewData["SearchString"]);
+    }
+
+    [Fact]
     public async Task Index_DoesNotLogWarning_WhenServiceReturnsData()
     {
         var (controller, serviceMock, loggerMock) = CreateController();

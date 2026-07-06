@@ -45,9 +45,57 @@ public class UsuarioService : IUsuarioService
 
             return await response.Content.ReadFromJsonAsync<PaginatedResponse<Usuario>>(cancellationToken: ct);
         }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Get usuarios request was cancelled");
+            throw new OperationCanceledException("The get usuarios request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error while fetching usuarios");
+            return null;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching usuarios from API");
+            _logger.LogError(ex, "Unexpected error fetching usuarios");
+            return null;
+        }
+    }
+
+    public async Task<PaginatedResponse<Usuario>?> BuscarUsuariosAsync(string texto, int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
+    {
+        var token = GetToken();
+
+        if (token is null)
+        {
+            _logger.LogWarning("No access token found");
+            return null;
+        }
+
+        try
+        {
+            var encodedTexto = Uri.EscapeDataString(texto);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Usuario/buscar?texto={encodedTexto}&PageNumber={pageNumber}&PageSize={pageSize}");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(request, ct);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<PaginatedResponse<Usuario>>(cancellationToken: ct);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Search usuarios request was cancelled");
+            throw new OperationCanceledException("The search usuarios request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error while searching usuarios");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error searching usuarios");
             return null;
         }
     }

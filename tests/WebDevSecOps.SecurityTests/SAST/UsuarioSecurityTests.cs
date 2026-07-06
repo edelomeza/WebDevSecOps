@@ -55,6 +55,54 @@ public class UsuarioSecurityTests
     }
 
     [Fact]
+    public async Task UsuarioSearch_RequiresAuthentication()
+    {
+        var (factory, client) = CreateUnauthenticatedClient();
+        using (factory)
+        using (client)
+        {
+            var (status, _) = await SecurityTestHelpers.GetAsync(client, "/Usuario/Index?searchString=test");
+            Assert.Equal((int)HttpStatusCode.Redirect, status);
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(SecurityTestData.XssPayloads.All), MemberType = typeof(SecurityTestData.XssPayloads))]
+    public async Task UsuarioSearch_RejectsXssInSearchString(string xssPayload)
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            HandleCookies = true,
+        });
+
+        await AuthenticateAsync(client);
+
+        var (status, body) = await SecurityTestHelpers.GetAsync(client, $"/Usuario/Index?searchString={Uri.EscapeDataString(xssPayload)}");
+        Assert.Equal((int)HttpStatusCode.OK, status);
+        Assert.DoesNotContain(xssPayload, body, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [MemberData(nameof(SecurityTestData.SqlInjectionPayloads.All), MemberType = typeof(SecurityTestData.SqlInjectionPayloads))]
+    public async Task UsuarioSearch_RejectsSqlInjectionInSearchString(string sqlPayload)
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            HandleCookies = true,
+        });
+
+        await AuthenticateAsync(client);
+
+        var (status, body) = await SecurityTestHelpers.GetAsync(client, $"/Usuario/Index?searchString={Uri.EscapeDataString(sqlPayload)}");
+        Assert.Equal((int)HttpStatusCode.OK, status);
+        Assert.DoesNotContain(sqlPayload, body, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task UsuarioCreate_RequiresAuthentication()
     {
         var (factory, client) = CreateUnauthenticatedClient();

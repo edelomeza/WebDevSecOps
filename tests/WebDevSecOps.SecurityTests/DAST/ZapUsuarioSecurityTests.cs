@@ -176,4 +176,60 @@ public class ZapUsuarioSecurityTests
         var (status, _) = await SecurityTestHelpers.GetAsync(client, url);
         Assert.Equal((int)HttpStatusCode.OK, status);
     }
+
+    [Fact]
+    public async Task UsuarioSearch_RespondsWithinThreshold()
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            HandleCookies = true,
+        });
+
+        await AuthenticateAsync(client);
+
+        var sw = Stopwatch.StartNew();
+        var (status, _) = await SecurityTestHelpers.GetAsync(client, "/Usuario/Index?searchString=Juan");
+        sw.Stop();
+
+        Assert.Equal((int)HttpStatusCode.OK, status);
+        Assert.True(sw.ElapsedMilliseconds < 60000,
+            $"Usuarios search took {sw.ElapsedMilliseconds}ms (threshold: 60000ms)");
+    }
+
+    [Fact]
+    public async Task UsuarioSearch_RejectsLongSearchString()
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            HandleCookies = true,
+        });
+
+        await AuthenticateAsync(client);
+
+        var longSearch = new string('A', 500);
+        var (status, body) = await SecurityTestHelpers.GetAsync(client, $"/Usuario/Index?searchString={longSearch}");
+        Assert.Equal((int)HttpStatusCode.OK, status);
+        Assert.Contains(longSearch, body, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task UsuarioSearch_PreventsParameterPollution()
+    {
+        using var factory = CreateFactory();
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false,
+            HandleCookies = true,
+        });
+
+        await AuthenticateAsync(client);
+
+        var url = "/Usuario/Index?searchString=real&searchString=fake";
+        var (status, _) = await SecurityTestHelpers.GetAsync(client, url);
+        Assert.Equal((int)HttpStatusCode.OK, status);
+    }
 }
