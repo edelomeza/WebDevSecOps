@@ -62,7 +62,7 @@ public class EmpleadoCreateTests
     [Fact]
     public async Task Create_Post_ReturnsRedirectToIndex_WhenSuccess()
     {
-        var (controller, serviceMock, tipoMock, _) = CreateController();
+        var (controller, serviceMock, _, _) = CreateController();
 
         serviceMock
             .Setup(x => x.CreateEmpleadoAsync(It.IsAny<EmpleadoCreateViewModel>(), It.IsAny<CancellationToken>()))

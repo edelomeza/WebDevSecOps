@@ -57,7 +57,7 @@ public class EmpleadoUpdateTests
 
         serviceMock
             .Setup(x => x.GetEmpleadoByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(null);
+            .ReturnsAsync(default(Empleado));
 
         var result = await controller.Update(999, CancellationToken.None);
 
