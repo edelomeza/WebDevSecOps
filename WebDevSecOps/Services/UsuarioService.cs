@@ -45,9 +45,19 @@ public class UsuarioService : IUsuarioService
 
             return await response.Content.ReadFromJsonAsync<PaginatedResponse<Usuario>>(cancellationToken: ct);
         }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Get usuarios request was cancelled");
+            throw new OperationCanceledException("The get usuarios request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error while fetching usuarios");
+            return null;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching usuarios from API");
+            _logger.LogError(ex, "Unexpected error fetching usuarios");
             return null;
         }
     }
@@ -73,9 +83,19 @@ public class UsuarioService : IUsuarioService
 
             return await response.Content.ReadFromJsonAsync<PaginatedResponse<Usuario>>(cancellationToken: ct);
         }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Search usuarios request was cancelled");
+            throw new OperationCanceledException("The search usuarios request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error while searching usuarios");
+            return null;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error searching usuarios from API");
+            _logger.LogError(ex, "Unexpected error searching usuarios");
             return null;
         }
     }

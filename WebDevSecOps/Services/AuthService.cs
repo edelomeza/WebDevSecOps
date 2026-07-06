@@ -70,9 +70,14 @@ public class AuthService : IAuthService
             var response = await _httpClient.SendAsync(request, ct);
             return response.IsSuccessStatusCode;
         }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error while calling logout API");
+            return false;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error calling logout API");
+            _logger.LogError(ex, "Unexpected error during logout");
             return false;
         }
     }
