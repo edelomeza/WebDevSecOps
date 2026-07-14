@@ -93,6 +93,14 @@ builder.Services.AddHttpClient<IEmpleadoService, EmpleadoService>(client =>
 })
 .AddStandardResilienceHandler();
 
+builder.Services.AddHttpClient<IClienteService, ClienteService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]
+        ?? throw new InvalidOperationException("ApiSettings:BaseUrl is not configured."));
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+.AddStandardResilienceHandler();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

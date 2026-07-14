@@ -4,14 +4,14 @@ using WebDevSecOps.Models;
 
 namespace WebDevSecOps.Services;
 
-public class EmpleadoService : IEmpleadoService
+public class ClienteService : IClienteService
 {
     private readonly HttpClient _httpClient;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITokenStore _tokenStore;
-    private readonly ILogger<EmpleadoService> _logger;
+    private readonly ILogger<ClienteService> _logger;
 
-    public EmpleadoService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor, ITokenStore tokenStore, ILogger<EmpleadoService> logger)
+    public ClienteService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor, ITokenStore tokenStore, ILogger<ClienteService> logger)
     {
         _httpClient = httpClient;
         _httpContextAccessor = httpContextAccessor;
@@ -25,7 +25,7 @@ public class EmpleadoService : IEmpleadoService
         return user is not null ? _tokenStore.GetTokenFromPrincipal(user) : null;
     }
 
-    public async Task<PaginatedResponse<Empleado>?> GetEmpleadosAsync(int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
+    public async Task<PaginatedResponse<Cliente>?> GetClientesAsync(int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
     {
         var token = GetToken();
 
@@ -37,32 +37,32 @@ public class EmpleadoService : IEmpleadoService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Empleado?PageNumber={pageNumber}&PageSize={pageSize}");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Cliente?PageNumber={pageNumber}&PageSize={pageSize}");
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.SendAsync(request, ct);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<PaginatedResponse<Empleado>>(cancellationToken: ct);
+            return await response.Content.ReadFromJsonAsync<PaginatedResponse<Cliente>>(cancellationToken: ct);
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Get empleados request was cancelled");
-            throw new OperationCanceledException("The get empleados request was cancelled.", ex);
+            _logger.LogWarning(ex, "Get clientes request was cancelled");
+            throw new OperationCanceledException("The get clientes request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Connection error fetching empleados");
+            _logger.LogError(ex, "Connection error fetching clientes");
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error fetching empleados");
+            _logger.LogError(ex, "Unexpected error fetching clientes");
             return null;
         }
     }
 
-    public async Task<PaginatedResponse<Empleado>?> SearchEmpleadosAsync(string? texto, int? idTipoEmpleado, int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
+    public async Task<PaginatedResponse<Cliente>?> SearchClientesAsync(string? texto, int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
     {
         var token = GetToken();
 
@@ -83,37 +83,34 @@ public class EmpleadoService : IEmpleadoService
             if (!string.IsNullOrEmpty(texto))
                 queryParams.Add($"texto={Uri.EscapeDataString(texto)}");
 
-            if (idTipoEmpleado.HasValue)
-                queryParams.Add($"idTipoEmpleado={idTipoEmpleado.Value}");
-
             var queryString = string.Join("&", queryParams);
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Empleado/buscar?{queryString}");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Cliente/buscar?{queryString}");
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.SendAsync(request, ct);
             response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadFromJsonAsync<PaginatedResponse<Empleado>>(cancellationToken: ct);
+            return await response.Content.ReadFromJsonAsync<PaginatedResponse<Cliente>>(cancellationToken: ct);
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Search empleados request was cancelled");
-            throw new OperationCanceledException("The search empleados request was cancelled.", ex);
+            _logger.LogWarning(ex, "Search clientes request was cancelled");
+            throw new OperationCanceledException("The search clientes request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Connection error searching empleados");
+            _logger.LogError(ex, "Connection error searching clientes");
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error searching empleados");
+            _logger.LogError(ex, "Unexpected error searching clientes");
             return null;
         }
     }
 
-    public async Task<Empleado?> GetEmpleadoByIdAsync(int id, CancellationToken ct = default)
+    public async Task<Cliente?> GetClienteByIdAsync(int id, CancellationToken ct = default)
     {
         var token = GetToken();
 
@@ -125,41 +122,41 @@ public class EmpleadoService : IEmpleadoService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Empleado/{id}");
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Cliente/{id}");
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.SendAsync(request, ct);
 
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<Empleado>(cancellationToken: ct);
+                return await response.Content.ReadFromJsonAsync<Cliente>(cancellationToken: ct);
 
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                _logger.LogWarning("Empleado with id {Id} not found", id);
+                _logger.LogWarning("Cliente with id {Id} not found", id);
                 return null;
             }
 
-            _logger.LogWarning("Get empleado by id failed with status {StatusCode}", response.StatusCode);
+            _logger.LogWarning("Get cliente by id failed with status {StatusCode}", response.StatusCode);
             return null;
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Get empleado by id request was cancelled");
-            throw new OperationCanceledException("The get empleado by id request was cancelled.", ex);
+            _logger.LogWarning(ex, "Get cliente by id request was cancelled");
+            throw new OperationCanceledException("The get cliente by id request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Connection error fetching empleado {Id}", id);
+            _logger.LogError(ex, "Connection error fetching cliente {Id}", id);
             return null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error fetching empleado {Id}", id);
+            _logger.LogError(ex, "Unexpected error fetching cliente {Id}", id);
             return null;
         }
     }
 
-    public async Task<OperationResult> CreateEmpleadoAsync(EmpleadoCreateViewModel model, CancellationToken ct = default)
+    public async Task<OperationResult> CreateClienteAsync(ClienteCreateViewModel model, CancellationToken ct = default)
     {
         var token = GetToken();
 
@@ -171,7 +168,7 @@ public class EmpleadoService : IEmpleadoService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/Empleado")
+            using var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/Cliente")
             {
                 Content = JsonContent.Create(model)
             };
@@ -181,11 +178,11 @@ public class EmpleadoService : IEmpleadoService
 
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Empleado created successfully");
+                _logger.LogInformation("Cliente created successfully");
                 return OperationResult.Ok();
             }
 
-            await SafeResponseLogger.LogResponseFailure(_logger, response, "CreateEmpleado", ct: ct);
+            await SafeResponseLogger.LogResponseFailure(_logger, response, "CreateCliente", ct: ct);
 
             var rawBody = await response.Content.ReadAsStringAsync(ct);
             var errorResponse = JsonSerializer.Deserialize<ApiErrorResponse>(rawBody);
@@ -193,27 +190,27 @@ public class EmpleadoService : IEmpleadoService
             if (errorResponse?.Errors is not null && errorResponse.Errors.Count > 0)
                 return OperationResult.Fail(errorResponse.Errors, errorResponse.Title);
 
-            var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al crear el empleado.";
+            var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al crear el cliente.";
             return OperationResult.Fail(message);
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Create empleado request was cancelled");
-            throw new OperationCanceledException("The create empleado request was cancelled.", ex);
+            _logger.LogWarning(ex, "Create cliente request was cancelled");
+            throw new OperationCanceledException("The create cliente request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Connection error while creating empleado");
+            _logger.LogError(ex, "Connection error while creating cliente");
             return OperationResult.Fail("Error de conexion con el servidor. Verifique su conexion e intente nuevamente.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error creating empleado");
+            _logger.LogError(ex, "Unexpected error creating cliente");
             return OperationResult.Fail("Error inesperado. Intente nuevamente.");
         }
     }
 
-    public async Task<OperationResult> UpdateEmpleadoAsync(int id, EmpleadoUpdateViewModel model, CancellationToken ct = default)
+    public async Task<OperationResult> UpdateClienteAsync(int id, ClienteUpdateViewModel model, CancellationToken ct = default)
     {
         var token = GetToken();
 
@@ -225,7 +222,7 @@ public class EmpleadoService : IEmpleadoService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Put, $"api/v1/Empleado/{id}")
+            using var request = new HttpRequestMessage(HttpMethod.Put, $"api/v1/Cliente/{id}")
             {
                 Content = JsonContent.Create(model)
             };
@@ -235,11 +232,11 @@ public class EmpleadoService : IEmpleadoService
 
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Empleado {Id} updated successfully", id);
+                _logger.LogInformation("Cliente {Id} updated successfully", id);
                 return OperationResult.Ok();
             }
 
-            await SafeResponseLogger.LogResponseFailure(_logger, response, "UpdateEmpleado", id, ct);
+            await SafeResponseLogger.LogResponseFailure(_logger, response, "UpdateCliente", id, ct);
 
             var rawBody = await response.Content.ReadAsStringAsync(ct);
 
@@ -251,27 +248,27 @@ public class EmpleadoService : IEmpleadoService
             if (errorResponse?.Errors is not null && errorResponse.Errors.Count > 0)
                 return OperationResult.Fail(errorResponse.Errors, errorResponse.Title);
 
-            var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al actualizar el empleado.";
+            var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al actualizar el cliente.";
             return OperationResult.Fail(message);
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Update empleado request was cancelled");
-            throw new OperationCanceledException("The update empleado request was cancelled.", ex);
+            _logger.LogWarning(ex, "Update cliente request was cancelled");
+            throw new OperationCanceledException("The update cliente request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Connection error while updating empleado {Id}", id);
+            _logger.LogError(ex, "Connection error while updating cliente {Id}", id);
             return OperationResult.Fail("Error de conexion con el servidor. Verifique su conexion e intente nuevamente.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error updating empleado {Id}", id);
+            _logger.LogError(ex, "Unexpected error updating cliente {Id}", id);
             return OperationResult.Fail("Error inesperado. Intente nuevamente.");
         }
     }
 
-    public async Task<OperationResult> DeleteEmpleadoAsync(int id, byte[] rowVersion, CancellationToken ct = default)
+    public async Task<OperationResult> DeleteClienteAsync(int id, byte[] rowVersion, CancellationToken ct = default)
     {
         var token = GetToken();
 
@@ -283,7 +280,7 @@ public class EmpleadoService : IEmpleadoService
 
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/v1/Empleado/{id}")
+            using var request = new HttpRequestMessage(HttpMethod.Delete, $"api/v1/Cliente/{id}")
             {
                 Content = JsonContent.Create(new { id, rowVersion })
             };
@@ -293,11 +290,11 @@ public class EmpleadoService : IEmpleadoService
 
             if (response.IsSuccessStatusCode)
             {
-                _logger.LogInformation("Empleado {Id} deleted successfully", id);
+                _logger.LogInformation("Cliente {Id} deleted successfully", id);
                 return OperationResult.Ok();
             }
 
-            await SafeResponseLogger.LogResponseFailure(_logger, response, "DeleteEmpleado", id, ct);
+            await SafeResponseLogger.LogResponseFailure(_logger, response, "DeleteCliente", id, ct);
 
             var rawBody = await response.Content.ReadAsStringAsync(ct);
 
@@ -309,22 +306,22 @@ public class EmpleadoService : IEmpleadoService
             if (errorResponse?.Errors is not null && errorResponse.Errors.Count > 0)
                 return OperationResult.Fail(errorResponse.Errors, errorResponse.Title);
 
-            var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al eliminar el empleado.";
+            var message = errorResponse?.Detail ?? errorResponse?.Title ?? "Error al eliminar el cliente.";
             return OperationResult.Fail(message);
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Delete empleado request was cancelled");
-            throw new OperationCanceledException("The delete empleado request was cancelled.", ex);
+            _logger.LogWarning(ex, "Delete cliente request was cancelled");
+            throw new OperationCanceledException("The delete cliente request was cancelled.", ex);
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Connection error while deleting empleado {Id}", id);
+            _logger.LogError(ex, "Connection error while deleting cliente {Id}", id);
             return OperationResult.Fail("Error de conexion con el servidor. Verifique su conexion e intente nuevamente.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unexpected error deleting empleado {Id}", id);
+            _logger.LogError(ex, "Unexpected error deleting cliente {Id}", id);
             return OperationResult.Fail("Error inesperado. Intente nuevamente.");
         }
     }

@@ -1,0 +1,49 @@
+@model ClienteDetailsViewModel
+@{
+    ViewData["Title"] = "Detalles del Cliente";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Detalles del Cliente</h2>
+
+            @{
+                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+            }
+            @if (generalErrors is { Count: > 0 })
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @foreach (var error in generalErrors)
+                    {
+                        <p class="mb-0">@error.ErrorMessage</p>
+                    }
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="card">
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrNombreCliente)</dt>
+                        <dd class="col-sm-8">@Model.StrNombreCliente</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrDireccionCliente)</dt>
+                        <dd class="col-sm-8">@(Model.StrDireccionCliente ?? "-")</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrCorreoElectronico)</dt>
+                        <dd class="col-sm-8">@Model.StrCorreoElectronico</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrNumeroTelefono)</dt>
+                        <dd class="col-sm-8">@Model.StrNumeroTelefono</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <a class="btn btn-primary" asp-action="Update" asp-route-id="@Model.Id" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Editar</a>
+                <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Regresar</a>
+            </div>
+        </div>
+    </div>
+</div>
