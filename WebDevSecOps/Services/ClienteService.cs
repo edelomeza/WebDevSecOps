@@ -55,9 +55,14 @@ public class ClienteService : IClienteService
             _logger.LogError(ex, "Connection error fetching clientes");
             return null;
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
-            _logger.LogError(ex, "Unexpected error fetching clientes");
+            _logger.LogError(ex, "Invalid JSON while fetching clientes");
+            return null;
+        }
+        catch (NotSupportedException ex)
+        {
+            _logger.LogError(ex, "Unsupported content while fetching clientes");
             return null;
         }
     }
