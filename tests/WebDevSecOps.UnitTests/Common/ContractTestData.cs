@@ -441,6 +441,89 @@ public static class ContractTestData
         Status = 409
     };
 
+    // ========================================================================
+    // Venta domain model
+    // ========================================================================
+
+    public static VenCatEstado ValidVenCatEstado => new()
+    {
+        Id = 1,
+        StrValor = "Activa",
+        StrDescripcion = "Venta activa"
+    };
+
+    public static PaginatedResponse<VenCatEstado> ValidVenCatEstadoPaginatedResponse => new()
+    {
+        Items = [ValidVenCatEstado],
+        TotalCount = 1,
+        PageNumber = 1,
+        PageSize = 100,
+        TotalPages = 1
+    };
+
+    public static Venta ValidVenta => new()
+    {
+        Id = 1,
+        IdCliCliente = 1,
+        StrNombreCliente = "Maria Garcia",
+        IdSegUsuario = 1,
+        StrNombreUsuario = "admin",
+        IdVenCatEstado = 1,
+        StrEstado = "Activa",
+        DteFechaHoraCompra = new DateTime(2026, 7, 14, 10, 30, 0, DateTimeKind.Utc),
+        StrClaveVenta = "V-000001",
+        RowVersion = _rowVersion
+    };
+
+    public static PaginatedResponse<Venta> ValidVentaPaginatedResponse => new()
+    {
+        Items = [ValidVenta],
+        TotalCount = 1,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 1
+    };
+
+    public static PaginatedResponse<Venta> EmptyVentaPaginatedResponse => new()
+    {
+        Items = [],
+        TotalCount = 0,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 0
+    };
+
+    public static VentaCreateViewModel ValidVentaCreateViewModel => new()
+    {
+        IdCliCliente = 1,
+        IdSegUsuario = 1,
+        StrNombreCliente = "Maria Garcia",
+        StrNombreUsuario = "admin"
+    };
+
+    public static List<CliClienteAutocompleteDto> ValidClienteAutocompleteList => new()
+    {
+        new CliClienteAutocompleteDto { Id = 1, StrNombreCliente = "Maria Garcia" },
+        new CliClienteAutocompleteDto { Id = 2, StrNombreCliente = "Juan Perez" }
+    };
+
+    public static List<SegUsuarioAutocompleteDto> ValidUsuarioAutocompleteList => new()
+    {
+        new SegUsuarioAutocompleteDto { Id = 1, StrNombre = "admin" },
+        new SegUsuarioAutocompleteDto { Id = 2, StrNombre = "vendedor1" }
+    };
+
+    public static ApiErrorResponse VentaValidationApiError => new()
+    {
+        Title = "Validation Error",
+        Detail = "One or more validation errors occurred.",
+        Status = 400,
+        Errors = new Dictionary<string, string[]>
+        {
+            ["idCliCliente"] = ["El cliente es obligatorio."]
+        }
+    };
+
     public const string TestToken = "eyJhbGciOiJIUzI1NiJ9.dGVzdC1kYXRhLW5vdC1hLXJlYWwtc2VjcmV0";
     public const string ConflictMessage = "El registro fue modificado por otro usuario. Recargue la p\u00e1gina e intente nuevamente.";
     public const string MissingTokenMessage = "Error de autenticaci\u00f3n. Inicie sesi\u00f3n nuevamente.";

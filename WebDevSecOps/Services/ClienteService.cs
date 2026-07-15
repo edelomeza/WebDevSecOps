@@ -161,6 +161,44 @@ public class ClienteService : IClienteService
         }
     }
 
+    public async Task<List<CliClienteAutocompleteDto>> AutocompleteClientesAsync(string texto, int maxResultados = 10, CancellationToken ct = default)
+    {
+        var token = GetToken();
+
+        if (token is null)
+        {
+            _logger.LogWarning("No access token found");
+            return [];
+        }
+
+        try
+        {
+            var encodedTexto = Uri.EscapeDataString(texto);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Cliente/autocomplete?texto={encodedTexto}&maxResultados={maxResultados}");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(request, ct);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<List<CliClienteAutocompleteDto>>(cancellationToken: ct) ?? [];
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Autocomplete clientes request was cancelled");
+            throw new OperationCanceledException("The autocomplete clientes request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error autocomplete clientes");
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error autocomplete clientes");
+            return [];
+        }
+    }
+
     public async Task<OperationResult> CreateClienteAsync(ClienteCreateViewModel model, CancellationToken ct = default)
     {
         var token = GetToken();

@@ -109,6 +109,22 @@ builder.Services.AddHttpClient<IProductoService, ProductoService>(client =>
 })
 .AddStandardResilienceHandler();
 
+builder.Services.AddHttpClient<IEstadoVentaService, EstadoVentaService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]
+        ?? throw new InvalidOperationException("ApiSettings:BaseUrl is not configured."));
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+.AddStandardResilienceHandler();
+
+builder.Services.AddHttpClient<IVentaService, VentaService>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]
+        ?? throw new InvalidOperationException("ApiSettings:BaseUrl is not configured."));
+    client.Timeout = TimeSpan.FromSeconds(30);
+})
+.AddStandardResilienceHandler();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

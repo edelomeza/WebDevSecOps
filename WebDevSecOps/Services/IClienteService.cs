@@ -10,6 +10,8 @@ public interface IClienteService
 
     Task<Cliente?> GetClienteByIdAsync(int id, CancellationToken ct = default);
 
+    Task<List<CliClienteAutocompleteDto>> AutocompleteClientesAsync(string texto, int maxResultados = 10, CancellationToken ct = default);
+
     Task<OperationResult> CreateClienteAsync(ClienteCreateViewModel model, CancellationToken ct = default);
 
     Task<OperationResult> UpdateClienteAsync(int id, ClienteUpdateViewModel model, CancellationToken ct = default);
