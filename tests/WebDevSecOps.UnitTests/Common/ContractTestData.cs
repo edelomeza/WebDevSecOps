@@ -198,8 +198,78 @@ public static class ContractTestData
     };
 
     // ========================================================================
-    // Constantes
+    // Cliente domain model
     // ========================================================================
+
+    public static Cliente ValidCliente => new()
+    {
+        Id = 1,
+        StrNombreCliente = "Maria Garcia",
+        StrDireccionCliente = "Av. Principal 123, Col. Centro",
+        StrCorreoElectronico = "maria.garcia@example.com",
+        StrNumeroTelefono = "5551234567",
+        RowVersion = _rowVersion
+    };
+
+    public static PaginatedResponse<Cliente> ValidClientePaginatedResponse => new()
+    {
+        Items = [ValidCliente],
+        TotalCount = 1,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 1
+    };
+
+    public static PaginatedResponse<Cliente> EmptyClientePaginatedResponse => new()
+    {
+        Items = [],
+        TotalCount = 0,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 0
+    };
+
+    public static ClienteCreateViewModel ValidClienteCreateViewModel => new()
+    {
+        StrNombreCliente = "Nuevo Cliente",
+        StrDireccionCliente = "Calle 123",
+        StrCorreoElectronico = "nuevo.cliente@example.com",
+        StrNumeroTelefono = "5559876543"
+    };
+
+    public static ClienteUpdateViewModel ValidClienteUpdateViewModel => new()
+    {
+        Id = 1,
+        StrNombreCliente = "Cliente Actualizado",
+        StrDireccionCliente = "Av. Actualizada 456",
+        StrCorreoElectronico = "actualizado@example.com",
+        StrNumeroTelefono = "5551112233",
+        RowVersion = _rowVersion
+    };
+
+    public static object ValidClienteDeleteRequestBody => new
+    {
+        id = 1,
+        rowVersion = _rowVersion
+    };
+
+    public static ApiErrorResponse ClienteValidationApiError => new()
+    {
+        Title = "Validation Error",
+        Detail = "One or more validation errors occurred.",
+        Status = 400,
+        Errors = new Dictionary<string, string[]>
+        {
+            ["strNombreCliente"] = ["El nombre del cliente es obligatorio."]
+        }
+    };
+
+    public static ApiErrorResponse ClienteConflictApiError => new()
+    {
+        Title = "Conflict",
+        Detail = "The record was modified by another user.",
+        Status = 409
+    };
 
     // ========================================================================
     // Empleado domain model

@@ -1,0 +1,81 @@
+@model ClienteUpdateViewModel
+@{
+    ViewData["Title"] = "Actualizar Cliente";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Actualizar Cliente</h2>
+
+            @{
+                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+            }
+            @if (generalErrors is { Count: > 0 })
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @foreach (var error in generalErrors)
+                    {
+                        <p class="mb-0">@error.ErrorMessage</p>
+                    }
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <input asp-for="Id" type="hidden" />
+                <input asp-for="RowVersion" type="hidden" />
+
+                <div class="mb-3">
+                    <label asp-for="StrNombreCliente" class="form-label"></label>
+                    <input asp-for="StrNombreCliente" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrNombreCliente" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrDireccionCliente" class="form-label"></label>
+                    <input asp-for="StrDireccionCliente" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrDireccionCliente" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrCorreoElectronico" class="form-label"></label>
+                    <input asp-for="StrCorreoElectronico" class="form-control" autocomplete="off" type="email" />
+                    <span asp-validation-for="StrCorreoElectronico" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrNumeroTelefono" class="form-label"></label>
+                    <input asp-for="StrNumeroTelefono" class="form-control" autocomplete="off" maxlength="10" type="tel" />
+                    <span asp-validation-for="StrNumeroTelefono" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])">
+        (function () {
+            var form = document.querySelector('form.needs-validation');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                });
+            }
+        })();
+    </script>
+}
