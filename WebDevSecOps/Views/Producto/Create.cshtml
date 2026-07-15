@@ -1,0 +1,140 @@
+@model ProductoCreateViewModel
+@{
+    ViewData["Title"] = "Agregar Producto";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Agregar Producto</h2>
+
+            @{
+                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+            }
+            @if (generalErrors is { Count: > 0 })
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @foreach (var error in generalErrors)
+                    {
+                        <p class="mb-0">@error.ErrorMessage</p>
+                    }
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <div class="mb-3">
+                    <label asp-for="StrNombreProducto" class="form-label"></label>
+                    <input asp-for="StrNombreProducto" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrNombreProducto" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrURLImagen" class="form-label"></label>
+                    <input asp-for="StrURLImagen" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="StrURLImagen" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="StrDescripcion" class="form-label"></label>
+                    <textarea asp-for="StrDescripcion" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="StrDescripcion" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IntNumeroExistencia" class="form-label"></label>
+                    <input asp-for="IntNumeroExistencia" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="IntNumeroExistencia" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DecPrecio" class="form-label"></label>
+                    <input asp-for="DecPrecio" class="form-control" type="number" step="0.01" min="0.01" />
+                    <span asp-validation-for="DecPrecio" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])">
+        (function () {
+            var nombreInput = document.getElementById('StrNombreProducto');
+            if (nombreInput) {
+                nombreInput.addEventListener('input', function () {
+                    var val = nombreInput.value;
+                    var regex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]+$/;
+                    if (val.length > 0 && !regex.test(val)) {
+                        nombreInput.setCustomValidity('Solo letras, numeros y espacios');
+                        nombreInput.classList.add('is-invalid');
+                    } else {
+                        nombreInput.setCustomValidity('');
+                        nombreInput.classList.remove('is-invalid');
+                        if (val.length > 0) nombreInput.classList.add('is-valid');
+                    }
+                });
+            }
+
+            var precioInput = document.getElementById('DecPrecio');
+            if (precioInput) {
+                precioInput.addEventListener('blur', function () {
+                    var val = parseFloat(precioInput.value);
+                    if (val < 0.01) {
+                        precioInput.setCustomValidity('El precio debe ser mayor o igual a 0.01');
+                        precioInput.classList.add('is-invalid');
+                    } else {
+                        precioInput.setCustomValidity('');
+                        precioInput.classList.remove('is-invalid');
+                        if (precioInput.value.length > 0) precioInput.classList.add('is-valid');
+                    }
+                });
+                precioInput.addEventListener('input', function () {
+                    precioInput.setCustomValidity('');
+                    precioInput.classList.remove('is-invalid');
+                    precioInput.classList.remove('is-valid');
+                });
+            }
+
+            var existenciaInput = document.getElementById('IntNumeroExistencia');
+            if (existenciaInput) {
+                existenciaInput.addEventListener('blur', function () {
+                    var val = parseInt(existenciaInput.value);
+                    if (val < 0) {
+                        existenciaInput.setCustomValidity('La existencia no puede ser negativa');
+                        existenciaInput.classList.add('is-invalid');
+                    } else {
+                        existenciaInput.setCustomValidity('');
+                        existenciaInput.classList.remove('is-invalid');
+                        if (existenciaInput.value.length > 0) existenciaInput.classList.add('is-valid');
+                    }
+                });
+                existenciaInput.addEventListener('input', function () {
+                    existenciaInput.setCustomValidity('');
+                    existenciaInput.classList.remove('is-invalid');
+                    existenciaInput.classList.remove('is-valid');
+                });
+            }
+
+            var form = document.querySelector('form.needs-validation');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                });
+            }
+        })();
+    </script>
+}
