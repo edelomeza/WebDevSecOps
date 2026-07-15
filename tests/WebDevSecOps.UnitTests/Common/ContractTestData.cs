@@ -272,6 +272,83 @@ public static class ContractTestData
     };
 
     // ========================================================================
+    // Producto domain model
+    // ========================================================================
+
+    public static Producto ValidProducto => new()
+    {
+        Id = 1,
+        StrNombreProducto = "Laptop Gamer",
+        StrURLImagen = "https://example.com/img/laptop.jpg",
+        StrDescripcion = "Laptop para gaming de alta gama",
+        IntNumeroExistencia = 10,
+        DecPrecio = 15000.50m,
+        RowVersion = _rowVersion
+    };
+
+    public static PaginatedResponse<Producto> ValidProductoPaginatedResponse => new()
+    {
+        Items = [ValidProducto],
+        TotalCount = 1,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 1
+    };
+
+    public static PaginatedResponse<Producto> EmptyProductoPaginatedResponse => new()
+    {
+        Items = [],
+        TotalCount = 0,
+        PageNumber = 1,
+        PageSize = 10,
+        TotalPages = 0
+    };
+
+    public static ProductoCreateViewModel ValidProductoCreateViewModel => new()
+    {
+        StrNombreProducto = "Nuevo Producto",
+        StrURLImagen = "https://example.com/img/nuevo.jpg",
+        StrDescripcion = "Descripcion del nuevo producto",
+        IntNumeroExistencia = 5,
+        DecPrecio = 250.99m
+    };
+
+    public static ProductoUpdateViewModel ValidProductoUpdateViewModel => new()
+    {
+        Id = 1,
+        StrNombreProducto = "Producto Actualizado",
+        StrURLImagen = "https://example.com/img/actualizado.jpg",
+        StrDescripcion = "Descripcion actualizada",
+        IntNumeroExistencia = 20,
+        DecPrecio = 500.00m,
+        RowVersion = _rowVersion
+    };
+
+    public static object ValidProductoDeleteRequestBody => new
+    {
+        id = 1,
+        rowVersion = _rowVersion
+    };
+
+    public static ApiErrorResponse ProductoValidationApiError => new()
+    {
+        Title = "Validation Error",
+        Detail = "One or more validation errors occurred.",
+        Status = 400,
+        Errors = new Dictionary<string, string[]>
+        {
+            ["strNombreProducto"] = ["El nombre del producto es obligatorio."]
+        }
+    };
+
+    public static ApiErrorResponse ProductoConflictApiError => new()
+    {
+        Title = "Conflict",
+        Detail = "The record was modified by another user.",
+        Status = 409
+    };
+
+    // ========================================================================
     // Empleado domain model
     // ========================================================================
 
