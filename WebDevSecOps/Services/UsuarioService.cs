@@ -100,6 +100,44 @@ public class UsuarioService : IUsuarioService
         }
     }
 
+    public async Task<List<SegUsuarioAutocompleteDto>> AutocompleteUsuariosAsync(string texto, int maxResultados = 10, CancellationToken ct = default)
+    {
+        var token = GetToken();
+
+        if (token is null)
+        {
+            _logger.LogWarning("No access token found");
+            return [];
+        }
+
+        try
+        {
+            var encodedTexto = Uri.EscapeDataString(texto);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/Usuario/autocomplete?texto={encodedTexto}&maxResultados={maxResultados}");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(request, ct);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<List<SegUsuarioAutocompleteDto>>(cancellationToken: ct) ?? [];
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Autocomplete usuarios request was cancelled");
+            throw new OperationCanceledException("The autocomplete usuarios request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error autocomplete usuarios");
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error autocomplete usuarios");
+            return [];
+        }
+    }
+
     public async Task<CreateUsuarioResult> CreateUsuarioAsync(UsuarioCreateViewModel model, CancellationToken ct = default)
     {
         var token = GetToken();

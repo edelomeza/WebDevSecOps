@@ -1,0 +1,112 @@
+@model PaginatedResponse<Venta>
+@{
+    ViewData["Title"] = "Ventas";
+    var currentQuery = Context.Request.Query;
+    var texto = currentQuery["texto"].FirstOrDefault();
+    var dteFechaInicio = currentQuery["dteFechaInicio"].FirstOrDefault();
+    var dteFechaFin = currentQuery["dteFechaFin"].FirstOrDefault();
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Ventas</h2>
+        <a class="btn btn-primary" asp-action="Create" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">+ Agregar Venta</a>
+    </div>
+
+    <form method="get" action="/Venta/Index" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="texto" class="form-control" placeholder="Buscar por clave o cliente..." value="@texto" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-text">Desde</label>
+            <input type="date" name="dteFechaInicio" class="form-control" value="@dteFechaInicio" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-text">Hasta</label>
+            <input type="date" name="dteFechaFin" class="form-control" value="@dteFechaFin" />
+        </div>
+        <div class="col-md-2 d-flex gap-1 align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Buscar</button>
+            <a href="/Venta/Index" class="btn btn-outline-secondary w-100">Limpiar</a>
+        </div>
+    </form>
+
+    @if (Model?.Items is null || Model.Items.Count == 0)
+    {
+        <div class="alert alert-info">No se encontraron ventas.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Fecha y Hora</th>
+                        <th scope="col">Clave Venta</th>
+                        <th scope="col">Nombre Cliente</th>
+                        <th scope="col">Estado Venta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var venta in Model.Items)
+                    {
+                        <tr>
+                            <td>@venta.DteFechaHoraCompra?.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@venta.StrClaveVenta</td>
+                            <td>@venta.StrNombreCliente</td>
+                            @{
+                                var estadoValor = "-";
+                                if (ViewBag.EstadoVentaDict is not null && ViewBag.EstadoVentaDict.ContainsKey(venta.IdVenCatEstado))
+                                {
+                                    estadoValor = ViewBag.EstadoVentaDict[venta.IdVenCatEstado];
+                                }
+                            }
+                            <td>@estadoValor</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="Navegacion de ventas">
+            <ul class="pagination justify-content-center">
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@(Model.PageNumber - 1)&pageSize=@Model.PageSize">Anterior</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">Anterior</span>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@i&pageSize=@Model.PageSize">@i</a>
+                    </li>
+                }
+
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@(Model.PageNumber + 1)&pageSize=@Model.PageSize">Siguiente</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">Siguiente</span>
+                    </li>
+                }
+            </ul>
+        </nav>
+
+        <p class="text-center text-muted small">
+            Mostrando pagina @Model.PageNumber de @Model.TotalPages (@Model.TotalCount registros)
+        </p>
+    }
+</div>

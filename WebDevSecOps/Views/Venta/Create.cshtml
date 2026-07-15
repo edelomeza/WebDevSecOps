@@ -1,0 +1,144 @@
+@model VentaCreateViewModel
+@{
+    ViewData["Title"] = "Agregar Venta";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <h2 class="mb-4">Agregar Venta</h2>
+
+            @{
+                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+            }
+            @if (generalErrors is { Count: > 0 })
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @foreach (var error in generalErrors)
+                    {
+                        <p class="mb-0">@error.ErrorMessage</p>
+                    }
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <div class="mb-3 position-relative">
+                    <label for="clienteSearch" class="form-label">Cliente</label>
+                    <input id="clienteSearch" class="form-control" placeholder="Buscar cliente..." autocomplete="off" />
+                    <input asp-for="IdCliCliente" type="hidden" />
+                    <input asp-for="StrNombreCliente" type="hidden" />
+                    <div id="clienteResults" class="list-group autocomplete-dropdown" style="display:none; position:absolute; z-index:1000; width:100%"></div>
+                    <span asp-validation-for="IdCliCliente" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 position-relative">
+                    <label for="usuarioSearch" class="form-label">Usuario</label>
+                    <input id="usuarioSearch" class="form-control" placeholder="Buscar usuario..." autocomplete="off" />
+                    <input asp-for="IdSegUsuario" type="hidden" />
+                    <input asp-for="StrNombreUsuario" type="hidden" />
+                    <div id="usuarioResults" class="list-group autocomplete-dropdown" style="display:none; position:absolute; z-index:1000; width:100%"></div>
+                    <span asp-validation-for="IdSegUsuario" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])">
+        (function () {
+            function setupAutocomplete(searchInputId, hiddenIdInputId, hiddenNameInputId, resultsId, url) {
+                var searchInput = document.getElementById(searchInputId);
+                var hiddenIdInput = document.getElementById(hiddenIdInputId);
+                var hiddenNameInput = document.getElementById(hiddenNameInputId);
+                var resultsContainer = document.getElementById(resultsId);
+                var selectedValue = '';
+
+                if (!searchInput || !hiddenIdInput || !hiddenNameInput || !resultsContainer) return;
+
+                searchInput.addEventListener('input', function () {
+                    var val = searchInput.value.trim();
+
+                    if (val.length < 2) {
+                        resultsContainer.style.display = 'none';
+                        resultsContainer.innerHTML = '';
+                        if (selectedValue !== val) {
+                            hiddenIdInput.value = '';
+                            hiddenNameInput.value = '';
+                            selectedValue = '';
+                        }
+                        return;
+                    }
+
+                    selectedValue = val;
+                    hiddenIdInput.value = '';
+                    hiddenNameInput.value = '';
+
+                    fetch(url + '?texto=' + encodeURIComponent(val))
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            resultsContainer.innerHTML = '';
+                            if (!data || data.length === 0) {
+                                resultsContainer.style.display = 'none';
+                                return;
+                            }
+                            data.forEach(function (item) {
+                                var li = document.createElement('a');
+                                li.className = 'list-group-item list-group-item-action';
+                                li.href = '#';
+                                li.textContent = item.strNombreCliente || item.strNombre || '';
+                                li.addEventListener('click', function (e) {
+                                    e.preventDefault();
+                                    hiddenIdInput.value = item.id;
+                                    hiddenNameInput.value = li.textContent;
+                                    searchInput.value = li.textContent;
+                                    resultsContainer.style.display = 'none';
+                                    searchInput.classList.add('is-valid');
+                                    searchInput.classList.remove('is-invalid');
+                                });
+                                resultsContainer.appendChild(li);
+                            });
+                            resultsContainer.style.display = 'block';
+                        })
+                        .catch(function () {
+                            resultsContainer.style.display = 'none';
+                        });
+                });
+
+                searchInput.addEventListener('blur', function () {
+                    setTimeout(function () { resultsContainer.style.display = 'none'; }, 200);
+                });
+
+                searchInput.addEventListener('focus', function () {
+                    if (resultsContainer.children.length > 0) {
+                        resultsContainer.style.display = 'block';
+                    }
+                });
+            }
+
+            setupAutocomplete('clienteSearch', 'IdCliCliente', 'StrNombreCliente', 'clienteResults', '/Venta/ClientesAutocomplete');
+            setupAutocomplete('usuarioSearch', 'IdSegUsuario', 'StrNombreUsuario', 'usuarioResults', '/Venta/UsuariosAutocomplete');
+
+            var form = document.querySelector('form.needs-validation');
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                });
+            }
+        })();
+    </script>
+}
