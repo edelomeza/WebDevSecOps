@@ -1,38 +1,38 @@
 # WebDevSecOps
 
-**Proyecto Web desarrollado tomando en consideración buenas prácticas de DevSecOps**
+**Web project developed with DevSecOps best practices**
 
-Aplicación ASP.NET Core (BFF Pattern) con integración continua de seguridad en cada
-etapa del ciclo de desarrollo: análisis estático (SAST), análisis de dependencias (SCA),
-análisis dinámico (DAST), escaneo de secretos y contenedores.
-
----
-
-## Características
-
-- **Autenticación segura** — Cookie-based con BFF pattern (token almacenado server-side)
-- **CRUD de usuarios** — Crear, leer, actualizar y eliminar con paginación
-- **CRUD de empleados** — Con catálogo TipoEmpleado, búsqueda por texto y filtro por tipo
-- **CRUD de clientes** — Con autocomplete para selección en ventas
-- **CRUD de productos** — Con autocomplete y validación de existencia (stock)
-- **CRUD de ventas con detalle (VentaDetalle)** — Gestión de ventas, asignación de productos con autocomplete, validación de stock, eliminación AJAX, actualización de estado
-- **Autocomplete JSON endpoints** — Clientes, Usuarios y Productos con búsqueda asíncrona
-- **Catálogos read-only** — TipoEmpleado, EstadoVenta como servicios HttpClient independientes
-- **Seguridad por capas** — CSP, HSTS, anti-forgery, rate limiting en login, OWASP headers
-- **API remota** — Consume API REST externa con Polly resilience (retry, timeout, circuit breaker)
-- **Pipeline DevSecOps** — CI/CD automatizado con análisis de seguridad en cada push
-- **Optimistic concurrency** — Control de concurrencia vía RowVersion
+ASP.NET Core (BFF Pattern) application with continuous security integration
+at every stage of the development lifecycle: static analysis (SAST), dependency
+analysis (SCA), dynamic analysis (DAST), secret and container scanning.
 
 ---
 
-## Tecnologías
+## Features
 
-| Capa | Tecnologías |
+- **Secure Authentication** — Cookie-based with BFF pattern (server-side token storage)
+- **CRUD Usuarios** — Create, read, update, delete with pagination
+- **CRUD Empleados** — With TipoEmpleado catalog, text search and type filter
+- **CRUD Clientes** — With autocomplete for sales selection
+- **CRUD Productos** — With autocomplete and stock validation
+- **CRUD Ventas with detail (VentaDetalle)** — Sales management, product assignment with autocomplete, stock validation, AJAX delete, status update
+- **Autocomplete JSON endpoints** — Clients, Users and Products with async search
+- **Read-only catalogs** — TipoEmpleado, EstadoVenta as independent HttpClient services
+- **Layered security** — CSP, HSTS, anti-forgery, rate limiting on login, OWASP headers
+- **Remote API** — Consumes external REST API with Polly resilience (retry, timeout, circuit breaker)
+- **DevSecOps Pipeline** — Automated CI/CD with security analysis on every push
+- **Optimistic concurrency** — Concurrency control via RowVersion
+
+---
+
+## Technologies
+
+| Layer | Technologies |
 |---|---|
 | **Backend** | ASP.NET Core 10, Razor Pages, MVC Controllers |
 | **Frontend** | Bootstrap 5.3.x, jQuery 3.x, Toastr |
 | **API Mock** | WireMock |
-| **Contenedores** | Docker, Docker Compose |
+| **Containers** | Docker, Docker Compose |
 | **Testing** | xUnit, Moq, Coverlet |
 | **CI/CD** | GitHub Actions |
 | **SAST** | SecurityCodeScan, SonarAnalyzer, CodeQL |
@@ -44,7 +44,7 @@ análisis dinámico (DAST), escaneo de secretos y contenedores.
 
 ---
 
-## Requisitos previos
+## Prerequisites
 
 - .NET SDK 10.0
 - Docker Desktop
@@ -52,24 +52,24 @@ análisis dinámico (DAST), escaneo de secretos y contenedores.
 
 ---
 
-## Configuración rápida
+## Quick Setup
 
 ```bash
-# 1. Restaurar dependencias
+# 1. Restore dependencies
 dotnet restore
 
-# 2. Compilar
+# 2. Build
 dotnet build
 
-# 3. Ejecutar pruebas
+# 3. Run tests
 dotnet test
 ```
 
 ---
 
-## Ejecución
+## Running
 
-La aplicación consume una API REST externa. Configurar la URL base en `appsettings.json`:
+The application consumes an external REST API. Configure the base URL in `appsettings.json`:
 
 ```json
 "ApiSettings": {
@@ -77,43 +77,43 @@ La aplicación consume una API REST externa. Configurar la URL base en `appsetti
 }
 ```
 
-### Con Docker Compose
+### With Docker Compose
 
 ```bash
 docker compose up webapp
 ```
 
-Acceder a la aplicación en `http://localhost`.
+Access the application at `http://localhost`.
 
-### Sin Docker
+### Without Docker
 
 ```bash
 cd WebDevSecOps
 dotnet run --launch-profile https
 ```
 
-### Desarrollo con API mock (WireMock)
+### Development with mock API (WireMock)
 
 ```bash
-# Terminal 1 - Iniciar mock API
-docker run -p 7227:7227 -v /ruta/a/mappings:/home/wiremock/mappings \
+# Terminal 1 - Start mock API
+docker run -p 7227:7227 -v /path/to/mappings:/home/wiremock/mappings \
   wiremock/wiremock:latest --port 7227
 
-# Terminal 2 - Iniciar web app (apuntando a localhost)
+# Terminal 2 - Start web app (pointing to localhost)
 cd WebDevSecOps
-# Cambiar BaseUrl en appsettings.json a "https://localhost:7227/"
+# Change BaseUrl in appsettings.json to "https://localhost:7227/"
 dotnet run --launch-profile https
 ```
 
 ---
 
-## Pruebas
+## Tests
 
 ```bash
-# Todas las pruebas
+# All tests
 dotnet test
 
-# Proyecto específico
+# Specific project
 dotnet test tests/WebDevSecOps.UnitTests
 dotnet test tests/WebDevSecOps.IntegrationTests
 dotnet test tests/WebDevSecOps.SecurityTests
@@ -122,43 +122,43 @@ dotnet test tests/WebDevSecOps.E2E
 
 ---
 
-## Pipeline DevSecOps
+## DevSecOps Pipeline
 
-El pipeline automatizado (GitHub Actions) ejecuta en paralelo:
+The automated pipeline (GitHub Actions) runs in parallel:
 
-| Job | Herramienta | Propósito |
+| Job | Tool | Purpose |
 |---|---|---|
-| Build + SonarCloud | `dotnet build`, SonarScanner | Compilación y calidad de código |
-| CodeQL | GitHub CodeQL | Análisis de vulnerabilidades en el código |
-| SAST | SecurityCodeScan, Roslyn analyzers | Reglas de seguridad estáticas |
-| SCA | `dotnet list package --vulnerable`, Snyk | Vulnerabilidades en dependencias |
-| Secret Scanning | Gitleaks | Credenciales y secretos hardcodeados |
-| Container Scanning | Trivy | Vulnerabilidades en imagen Docker |
-| DAST | OWASP ZAP | Pruebas de penetración automatizadas |
-| SBOM | CycloneDX | Generación de SBOM en releases |
+| Build + SonarCloud | `dotnet build`, SonarScanner | Build and code quality |
+| CodeQL | GitHub CodeQL | Code vulnerability analysis |
+| SAST | SecurityCodeScan, Roslyn analyzers | Static security rules |
+| SCA | `dotnet list package --vulnerable`, Snyk | Dependency vulnerabilities |
+| Secret Scanning | Gitleaks | Hardcoded credentials and secrets |
+| Container Scanning | Trivy | Docker image vulnerabilities |
+| DAST | OWASP ZAP | Automated penetration testing |
+| SBOM | CycloneDX | SBOM generation in releases |
 
 ---
 
-## Reportar vulnerabilidades
+## Reporting Vulnerabilities
 
-Si encuentras una vulnerabilidad de seguridad, por favor consulta [SECURITY.md](.github/SECURITY.md)
-para las instrucciones de reporte responsable. **No abras issues públicos.**
+If you find a security vulnerability, please check [SECURITY.md](.github/SECURITY.md)
+for responsible disclosure instructions. **Do not open public issues.**
 
 ---
 
-## Estructura del proyecto
+## Project Structure
 
 ```
 WebDevSecOps/
 ├── .github/                  # CI/CD, dependabot, security policy
-├── WebDevSecOps/             # Aplicación principal
-│   ├── Controllers/          # 5 controladores MVC
+├── WebDevSecOps/             # Main application
+│   ├── Controllers/          # 5 MVC controllers
 │   │   ├── UsuarioController.cs
 │   │   ├── EmpleadoController.cs
 │   │   ├── ClienteController.cs
 │   │   ├── ProductoController.cs
 │   │   └── VentaController.cs
-│   ├── Models/               # Modelos, ViewModels y DTOs
+│   ├── Models/               # Models, ViewModels and DTOs
 │   │   ├── Usuario/          # Usuario + 5 VMs + AutocompleteDto
 │   │   ├── Empleado/         # Empleado + 4 VMs + EmpCatTipoEmpleado
 │   │   ├── Cliente/          # Cliente + 4 VMs + AutocompleteDto
@@ -167,57 +167,57 @@ WebDevSecOps/
 │   │   ├── ApiErrorResponse, OperationResult, PaginatedResponse
 │   │   └── Auth (LoginRequest, LoginResponse)
 │   ├── Pages/                # Razor Pages (Login, Home, Layout)
-│   ├── Services/             # 8 pares interfaz/implementación + TokenStore
-│   │   ├── AuthService       # Login/logout con BFF pattern
+│   ├── Services/             # 8 interface/implementation pairs + TokenStore
+│   │   ├── AuthService       # Login/logout with BFF pattern
 │   │   ├── UsuarioService    # CRUD usuarios
-│   │   ├── EmpleadoService   # CRUD empleados + búsqueda
+│   │   ├── EmpleadoService   # CRUD empleados + search
 │   │   ├── ClienteService    # CRUD clientes + autocomplete
 │   │   ├── ProductoService   # CRUD productos + autocomplete + stock
 │   │   ├── VentaService      # CRUD ventas + VentaDetalle
-│   │   ├── EstadoVentaService# Catálogo read-only
-│   │   └── TipoEmpleadoService# Catálogo read-only
-│   ├── Views/                # 5 módulos con 4-5 vistas cada uno
+│   │   ├── EstadoVentaService# Read-only catalog
+│   │   └── TipoEmpleadoService# Read-only catalog
+│   ├── Views/                # 5 modules with 4-5 views each
 │   │   ├── Usuario/          # Index, Create, Details, Update, Delete
 │   │   ├── Empleado/         # Index, Create, Details, Update, Delete
 │   │   ├── Cliente/          # Index, Create, Details, Update, Delete
 │   │   ├── Producto/         # Index, Create, Details, Update, Delete
 │   │   ├── Venta/            # Index, Create, Productos
 │   │   └── Shared/           # _Layout.cshtml, _ValidationScriptsPartial
-│   └── wwwroot/              # Estáticos (CSS, JS, libs)
+│   └── wwwroot/              # Static files (CSS, JS, libs)
 ├── tests/
 │   ├── WebDevSecOps.UnitTests/
-│   │   ├── Pages/            # Tests por módulo (Empleados, Login, Productos,
+│   │   ├── Pages/            # Tests per module (Empleados, Login, Productos,
 │   │   │                     #   Usuarios, Ventas)
 │   │   └── Common/           # TestData, MockHttpMessageHandler, TestConstants
 │   ├── WebDevSecOps.IntegrationTests/
-│   │   └── Services/         # Tests de API Client por servicio
+│   │   └── Services/         # API Client tests per service
 │   ├── WebDevSecOps.SecurityTests/
-│   │   ├── SAST/             # Pruebas de seguridad estáticas
-│   │   ├── DAST/             # Pruebas dinámicas
-│   │   ├── SCA/              # Análisis de dependencias
-│   │   └── SecretScanning/   # Escaneo de secretos
+│   │   ├── SAST/             # Static security tests
+│   │   ├── DAST/             # Dynamic tests
+│   │   ├── SCA/              # Dependency analysis
+│   │   └── SecretScanning/   # Secret scanning
 │   ├── WebDevSecOps.E2E/
-│   └── MemoriaPruebas.md    # Lecciones aprendidas en testing
-├── docker/                   # Configuración de contenedores
+│   └── MemoriaPruebas.md    # Testing lessons learned
+├── docker/                   # Container configuration
 ├── docker-compose.yml
-└── AGENTS.md                 # Memoria del proyecto (convenciones, comandos)
+└── AGENTS.md                 # Project memory (conventions, commands)
 ```
 
 ---
 
-## Módulos CRUD
+## CRUD Modules
 
-| Módulo | Controller | Servicios | Vistas | Tests |
-|--------|-----------|-----------|--------|-------|
-| **Usuario** | `UsuarioController.cs` | `IUsuarioService` | 5 vistas | Unit, Integration, Security |
-| **Empleado** | `EmpleadoController.cs` | `IEmpleadoService`, `ITipoEmpleadoService` | 5 vistas | Unit, Integration, Security |
-| **Cliente** | `ClienteController.cs` | `IClienteService` | 5 vistas + Memoria.md | — |
-| **Producto** | `ProductoController.cs` | `IProductoService` | 5 vistas | Unit, Integration, Security |
-| **Venta** | `VentaController.cs` | `IVentaService`, `IEstadoVentaService` | 3 vistas + Productos + Memoria.md | Unit, Integration, Security |
+| Module | Controller | Services | Views | Tests |
+|--------|-----------|----------|-------|-------|
+| **Usuario** | `UsuarioController.cs` | `IUsuarioService` | 5 views | Unit, Integration, Security |
+| **Empleado** | `EmpleadoController.cs` | `IEmpleadoService`, `ITipoEmpleadoService` | 5 views | Unit, Integration, Security |
+| **Cliente** | `ClienteController.cs` | `IClienteService` | 5 views + Memoria.md | — |
+| **Producto** | `ProductoController.cs` | `IProductoService` | 5 views | Unit, Integration, Security |
+| **Venta** | `VentaController.cs` | `IVentaService`, `IEstadoVentaService` | 3 views + Productos + Memoria.md | Unit, Integration, Security |
 
-### Endpoints API consumidos
+### Consumed API Endpoints
 
-| Módulo | Endpoint | Método |
+| Module | Endpoint | Method |
 |--------|----------|--------|
 | **Auth** | `/api/v1/Login/login` | POST |
 | **Usuario** | `/api/v1/Usuario` | GET, POST |
@@ -247,6 +247,6 @@ WebDevSecOps/
 
 ---
 
-## Licencia
+## License
 
-Proyecto educativo con fines de demostración DevSecOps.
+Educational project for DevSecOps demonstration purposes.
