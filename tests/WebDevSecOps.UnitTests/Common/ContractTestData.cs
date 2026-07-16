@@ -524,6 +524,69 @@ public static class ContractTestData
         }
     };
 
+    // ========================================================================
+    // VentaDetalle domain model
+    // ========================================================================
+
+    public static VentaDetalle ValidVentaDetalle => new()
+    {
+        Id = 1,
+        IdVenVenta = 1,
+        IdProProducto = 1,
+        StrNombreProducto = "Laptop Gamer",
+        DecPrecio = 15000.50m,
+        IntPiezasVenta = 2,
+        DecTotalVenta = 30001.00m
+    };
+
+    public static List<VentaDetalle> ValidVentaDetalleList => new()
+    {
+        ValidVentaDetalle,
+        new VentaDetalle
+        {
+            Id = 2,
+            IdVenVenta = 1,
+            IdProProducto = 2,
+            StrNombreProducto = "Mouse Inalambrico",
+            DecPrecio = 500.00m,
+            IntPiezasVenta = 3,
+            DecTotalVenta = 1500.00m
+        }
+    };
+
+    // ========================================================================
+    // VentaAgregarProductoViewModel
+    // ========================================================================
+
+    public static VentaAgregarProductoViewModel ValidVentaAgregarProductoViewModel => new()
+    {
+        IdVenVenta = 1,
+        IdProProducto = 1,
+        IntPiezasVenta = 2
+    };
+
+    public static VentaAgregarProductoViewModel InvalidVentaAgregarProductoViewModel => new()
+    {
+        IdVenVenta = 0,
+        IdProProducto = 0,
+        IntPiezasVenta = 0
+    };
+
+    // ========================================================================
+    // ProProductoAutocompleteDto
+    // ========================================================================
+
+    public static List<ProProductoAutocompleteDto> ValidProductoAutocompleteList => new()
+    {
+        new ProProductoAutocompleteDto { Id = 1, StrTextoAutocomplete = "Laptop Gamer | #: 10 | $: 15000.50" },
+        new ProProductoAutocompleteDto { Id = 2, StrTextoAutocomplete = "Mouse Inalambrico | #: 5 | $: 500.00" }
+    };
+
+    public static List<ProProductoAutocompleteDto> ProductoAutocompleteListSinExistencia => new()
+    {
+        new ProProductoAutocompleteDto { Id = 3, StrTextoAutocomplete = "Teclado Mecanico | #: 0 | $: 800.00" }
+    };
+
     public const string TestToken = "eyJhbGciOiJIUzI1NiJ9.dGVzdC1kYXRhLW5vdC1hLXJlYWwtc2VjcmV0";
     public const string ConflictMessage = "El registro fue modificado por otro usuario. Recargue la p\u00e1gina e intente nuevamente.";
     public const string MissingTokenMessage = "Error de autenticaci\u00f3n. Inicie sesi\u00f3n nuevamente.";

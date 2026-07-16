@@ -268,6 +268,44 @@ public class ProductoService : IProductoService
         }
     }
 
+    public async Task<List<ProProductoAutocompleteDto>> AutocompleteProductosAsync(string texto, int maxResultados = 10, CancellationToken ct = default)
+    {
+        var token = GetToken();
+
+        if (token is null)
+        {
+            _logger.LogWarning("No access token found");
+            return [];
+        }
+
+        try
+        {
+            var encodedTexto = Uri.EscapeDataString(texto);
+            using var request = new HttpRequestMessage(HttpMethod.Get, $"api/v1/ventadetalle/autocomplete?texto={encodedTexto}&maxResultados={maxResultados}");
+            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _httpClient.SendAsync(request, ct);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<List<ProProductoAutocompleteDto>>(cancellationToken: ct) ?? [];
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogWarning(ex, "Autocomplete productos request was cancelled");
+            throw new OperationCanceledException("The autocomplete productos request was cancelled.", ex);
+        }
+        catch (HttpRequestException ex)
+        {
+            _logger.LogError(ex, "Connection error autocomplete productos");
+            return [];
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error autocomplete productos");
+            return [];
+        }
+    }
+
     public async Task<OperationResult> DeleteProductoAsync(int id, byte[] rowVersion, CancellationToken ct = default)
     {
         var token = GetToken();

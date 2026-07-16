@@ -12,6 +12,8 @@ namespace WebDevSecOps.IntegrationTests.Services;
 
 public class VentaApiClientTests
 {
+    private static readonly byte[] _rowVersion = [0x01, 0x02, 0x03, 0x04];
+
     private (VentaService Service, MockHttpMessageHandler Handler) CreateServiceWithToken(
         object? responseContent = null, HttpStatusCode? statusCode = null)
     {
@@ -178,5 +180,49 @@ public class VentaApiClientTests
         var result = await service.GetVentasAsync();
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task DeleteVentaDetalle_ShouldDeleteCorrectUrl()
+    {
+        var (service, handler) = CreateServiceWithToken(null, HttpStatusCode.OK);
+
+        await service.DeleteVentaDetalleAsync(1, _rowVersion);
+
+        Assert.Equal(HttpMethod.Delete, handler.LastRequest?.Method);
+        Assert.Equal("api/v1/ventadetalle/1", handler.LastRequest?.RequestUri?.PathAndQuery.TrimStart('/'));
+    }
+
+    [Fact]
+    public async Task DeleteVentaDetalle_ShouldReturnOk_WhenApiSucceeds()
+    {
+        var (service, _) = CreateServiceWithToken(null, HttpStatusCode.OK);
+
+        var result = await service.DeleteVentaDetalleAsync(1, _rowVersion);
+
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task DeleteVentaDetalle_ShouldReturnFail_WhenMissingToken()
+    {
+        var (service, _) = CreateServiceWithoutToken();
+
+        var result = await service.DeleteVentaDetalleAsync(1, _rowVersion);
+
+        Assert.False(result.Success);
+        Assert.Equal(ContractTestData.MissingTokenMessage, result.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task DeleteVentaDetalle_ShouldSendRequestBody()
+    {
+        var (service, handler) = CreateServiceWithToken(null, HttpStatusCode.OK);
+
+        await service.DeleteVentaDetalleAsync(1, _rowVersion);
+
+        Assert.NotNull(handler.LastRequestBody);
+        var json = JsonDocument.Parse(handler.LastRequestBody);
+        Assert.Equal(1, json.RootElement.GetProperty("id").GetInt32());
     }
 }
