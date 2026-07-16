@@ -18,8 +18,9 @@ public class VentaIndexTests
         var estadoMock = new Mock<IEstadoVentaService>();
         var clienteMock = new Mock<IClienteService>();
         var usuarioMock = new Mock<IUsuarioService>();
+        var productoMock = new Mock<IProductoService>();
         var loggerMock = new Mock<ILogger<VentaController>>();
-        var controller = new VentaController(serviceMock.Object, estadoMock.Object, clienteMock.Object, usuarioMock.Object, loggerMock.Object);
+        var controller = new VentaController(serviceMock.Object, estadoMock.Object, clienteMock.Object, usuarioMock.Object, productoMock.Object, loggerMock.Object);
 
         controller.ControllerContext = new ControllerContext
         {

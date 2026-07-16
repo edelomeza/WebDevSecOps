@@ -206,4 +206,21 @@ public class VentaSecurityTests
             Assert.Equal((int)HttpStatusCode.Redirect, status);
         }
     }
+
+    [Fact]
+    public async Task VentaEliminarProducto_RequiresAuthentication()
+    {
+        var (factory, client) = CreateUnauthenticatedClient();
+        using (factory)
+        using (client)
+        {
+            var form = SecurityTestHelpers.ToFormPayload(new Dictionary<string, string>
+            {
+                { "id", "1" },
+                { "rowVersion", "AAAA" },
+            });
+            var (status, _) = await SecurityTestHelpers.PostAsync(client, "/Venta/EliminarProducto", form);
+            Assert.Equal((int)HttpStatusCode.Redirect, status);
+        }
+    }
 }

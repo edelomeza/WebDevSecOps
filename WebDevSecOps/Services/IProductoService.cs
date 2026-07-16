@@ -15,4 +15,6 @@ public interface IProductoService
     Task<OperationResult> UpdateProductoAsync(int id, ProductoUpdateViewModel model, CancellationToken ct = default);
 
     Task<OperationResult> DeleteProductoAsync(int id, byte[] rowVersion, CancellationToken ct = default);
+
+    Task<List<ProProductoAutocompleteDto>> AutocompleteProductosAsync(string texto, int maxResultados = 10, CancellationToken ct = default);
 }

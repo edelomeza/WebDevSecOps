@@ -12,14 +12,15 @@ namespace WebDevSecOps.UnitTests;
 
 public class VentaCreateTests
 {
-    private static (VentaController Controller, Mock<IVentaService> ServiceMock, Mock<IEstadoVentaService> EstadoMock, Mock<IClienteService> ClienteMock, Mock<IUsuarioService> UsuarioMock, Mock<ILogger<VentaController>> LoggerMock) CreateController()
+    private static (VentaController Controller, Mock<IVentaService> ServiceMock, Mock<IEstadoVentaService> EstadoMock, Mock<IClienteService> ClienteMock, Mock<IUsuarioService> UsuarioMock, Mock<IProductoService> ProductoMock, Mock<ILogger<VentaController>> LoggerMock) CreateController()
     {
         var serviceMock = new Mock<IVentaService>();
         var estadoMock = new Mock<IEstadoVentaService>();
         var clienteMock = new Mock<IClienteService>();
         var usuarioMock = new Mock<IUsuarioService>();
+        var productoMock = new Mock<IProductoService>();
         var loggerMock = new Mock<ILogger<VentaController>>();
-        var controller = new VentaController(serviceMock.Object, estadoMock.Object, clienteMock.Object, usuarioMock.Object, loggerMock.Object);
+        var controller = new VentaController(serviceMock.Object, estadoMock.Object, clienteMock.Object, usuarioMock.Object, productoMock.Object, loggerMock.Object);
 
         controller.ControllerContext = new ControllerContext
         {
@@ -29,13 +30,13 @@ public class VentaCreateTests
             new DefaultHttpContext(),
             Mock.Of<ITempDataProvider>());
 
-        return (controller, serviceMock, estadoMock, clienteMock, usuarioMock, loggerMock);
+        return (controller, serviceMock, estadoMock, clienteMock, usuarioMock, productoMock, loggerMock);
     }
 
     [Fact]
     public async Task Create_Get_ReturnsView()
     {
-        var (controller, _, _, _, _, _) = CreateController();
+        var (controller, _, _, _, _, _, _) = CreateController();
 
         var result = await controller.Create();
 
@@ -46,7 +47,7 @@ public class VentaCreateTests
     [Fact]
     public async Task Create_Post_ReturnsRedirectToIndex_WhenSuccess()
     {
-        var (controller, serviceMock, _, _, _, _) = CreateController();
+        var (controller, serviceMock, _, _, _, _, _) = CreateController();
 
         serviceMock
             .Setup(x => x.CreateVentaAsync(It.IsAny<VentaCreateViewModel>(), It.IsAny<CancellationToken>()))
@@ -62,7 +63,7 @@ public class VentaCreateTests
     [Fact]
     public async Task Create_Post_ReturnsViewWithModel_WhenModelInvalid()
     {
-        var (controller, _, _, _, _, _) = CreateController();
+        var (controller, _, _, _, _, _, _) = CreateController();
 
         controller.ModelState.AddModelError("IdCliCliente", "Required");
 
@@ -75,7 +76,7 @@ public class VentaCreateTests
     [Fact]
     public async Task Create_Post_ReturnsViewWithModel_WhenServiceFails()
     {
-        var (controller, serviceMock, _, _, _, _) = CreateController();
+        var (controller, serviceMock, _, _, _, _, _) = CreateController();
 
         serviceMock
             .Setup(x => x.CreateVentaAsync(It.IsAny<VentaCreateViewModel>(), It.IsAny<CancellationToken>()))
@@ -90,7 +91,7 @@ public class VentaCreateTests
     [Fact]
     public async Task Create_Post_MapsFieldErrors_WhenServiceReturnsFieldErrors()
     {
-        var (controller, serviceMock, _, _, _, _) = CreateController();
+        var (controller, serviceMock, _, _, _, _, _) = CreateController();
 
         var fieldErrors = new Dictionary<string, string[]>
         {
@@ -112,7 +113,7 @@ public class VentaCreateTests
     [Fact]
     public async Task ClientesAutocomplete_ReturnsEmpty_WhenTextoLessThan2()
     {
-        var (controller, _, _, _, _, _) = CreateController();
+        var (controller, _, _, _, _, _, _) = CreateController();
 
         var result = await controller.ClientesAutocomplete("a");
 
@@ -124,7 +125,7 @@ public class VentaCreateTests
     [Fact]
     public async Task ClientesAutocomplete_ReturnsData_WhenTextoIsValid()
     {
-        var (controller, _, _, clienteMock, _, _) = CreateController();
+        var (controller, _, _, clienteMock, _, _, _) = CreateController();
 
         clienteMock
             .Setup(x => x.AutocompleteClientesAsync("Maria", 10, It.IsAny<CancellationToken>()))
@@ -141,7 +142,7 @@ public class VentaCreateTests
     [Fact]
     public async Task UsuariosAutocomplete_ReturnsEmpty_WhenTextoLessThan2()
     {
-        var (controller, _, _, _, _, _) = CreateController();
+        var (controller, _, _, _, _, _, _) = CreateController();
 
         var result = await controller.UsuariosAutocomplete("b");
 
@@ -153,7 +154,7 @@ public class VentaCreateTests
     [Fact]
     public async Task UsuariosAutocomplete_ReturnsData_WhenTextoIsValid()
     {
-        var (controller, _, _, _, usuarioMock, _) = CreateController();
+        var (controller, _, _, _, usuarioMock, _, _) = CreateController();
 
         usuarioMock
             .Setup(x => x.AutocompleteUsuariosAsync("admin", 10, It.IsAny<CancellationToken>()))
@@ -170,7 +171,7 @@ public class VentaCreateTests
     [Fact]
     public async Task Create_Post_ReturnsViewWithGeneralError_WhenServiceErrorMessage()
     {
-        var (controller, serviceMock, _, _, _, _) = CreateController();
+        var (controller, serviceMock, _, _, _, _, _) = CreateController();
 
         serviceMock
             .Setup(x => x.CreateVentaAsync(It.IsAny<VentaCreateViewModel>(), It.IsAny<CancellationToken>()))
