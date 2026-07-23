@@ -27,7 +27,7 @@ public class VentaController : Controller
 
     [HttpGet]
     [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
-    public async Task<IActionResult> Index(string? texto = null, DateTime? dteFechaInicio = null, DateTime? dteFechaFin = null, int pageNumber = 1, int pageSize = 10, CancellationToken ct = default)
+    public async Task<IActionResult> Index(string? texto = null, DateTime? dteFechaInicio = null, DateTime? dteFechaFin = null, int pageNumber = 1, int pageSize = 6, CancellationToken ct = default)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

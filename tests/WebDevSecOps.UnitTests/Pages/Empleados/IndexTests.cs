@@ -97,7 +97,7 @@ public class EmpleadoIndexTests
         await controller.Index();
 
         Assert.Equal(1, capturedPageNumber);
-        Assert.Equal(10, capturedPageSize);
+        Assert.Equal(6, capturedPageSize);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class EmpleadoIndexTests
         await controller.Index(texto: "Carlos");
 
         serviceMock.Verify(
-            x => x.SearchEmpleadosAsync("Carlos", null, 1, 10, It.IsAny<CancellationToken>()),
+            x => x.SearchEmpleadosAsync("Carlos", null, 1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
 
         serviceMock.Verify(
@@ -140,7 +140,7 @@ public class EmpleadoIndexTests
         await controller.Index(idTipoEmpleado: 2);
 
         serviceMock.Verify(
-            x => x.SearchEmpleadosAsync(null, 2, 1, 10, It.IsAny<CancellationToken>()),
+            x => x.SearchEmpleadosAsync(null, 2, 1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -160,7 +160,7 @@ public class EmpleadoIndexTests
         await controller.Index();
 
         serviceMock.Verify(
-            x => x.GetEmpleadosAsync(1, 10, It.IsAny<CancellationToken>()),
+            x => x.GetEmpleadosAsync(1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
 
         serviceMock.Verify(

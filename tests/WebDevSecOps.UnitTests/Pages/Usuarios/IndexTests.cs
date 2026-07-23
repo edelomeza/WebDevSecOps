@@ -42,7 +42,7 @@ public class IndexTests
             Items = usuarios,
             TotalCount = 1,
             PageNumber = 1,
-            PageSize = 10,
+            PageSize = 6,
             TotalPages = 1
         };
 
@@ -57,7 +57,7 @@ public class IndexTests
         Assert.Single(model.Items);
         Assert.Equal(1, model.TotalCount);
         Assert.Equal(1, model.PageNumber);
-        Assert.Equal(10, model.PageSize);
+        Assert.Equal(6, model.PageSize);
         Assert.Equal(1, model.TotalPages);
         Assert.Equal("Juan Pérez", model.Items[0].StrNombre);
         Assert.Null(controller.TempData["Error"]);
@@ -89,7 +89,7 @@ public class IndexTests
             Items = [],
             TotalCount = 0,
             PageNumber = 1,
-            PageSize = 10,
+            PageSize = 6,
             TotalPages = 0
         };
 
@@ -126,7 +126,7 @@ public class IndexTests
         await controller.Index();
 
         Assert.Equal(1, capturedPageNumber);
-        Assert.Equal(10, capturedPageSize);
+        Assert.Equal(6, capturedPageSize);
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public class IndexTests
             Items = usuarios,
             TotalCount = 1,
             PageNumber = 1,
-            PageSize = 10,
+            PageSize = 6,
             TotalPages = 1
         };
 

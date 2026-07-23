@@ -99,7 +99,7 @@ public class VentaIndexTests
         await controller.Index();
 
         Assert.Equal(1, capturedPageNumber);
-        Assert.Equal(10, capturedPageSize);
+        Assert.Equal(6, capturedPageSize);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class VentaIndexTests
         await controller.Index(texto: "V-000001");
 
         serviceMock.Verify(
-            x => x.SearchVentasAsync("V-000001", null, null, 1, 10, It.IsAny<CancellationToken>()),
+            x => x.SearchVentasAsync("V-000001", null, null, 1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
 
         serviceMock.Verify(
@@ -145,7 +145,7 @@ public class VentaIndexTests
         await controller.Index(dteFechaInicio: desde, dteFechaFin: hasta);
 
         serviceMock.Verify(
-            x => x.SearchVentasAsync(null, desde, hasta, 1, 10, It.IsAny<CancellationToken>()),
+            x => x.SearchVentasAsync(null, desde, hasta, 1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -165,7 +165,7 @@ public class VentaIndexTests
         await controller.Index();
 
         serviceMock.Verify(
-            x => x.GetVentasAsync(1, 10, It.IsAny<CancellationToken>()),
+            x => x.GetVentasAsync(1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
 
         serviceMock.Verify(

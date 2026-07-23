@@ -13,7 +13,7 @@ analysis (SCA), dynamic analysis (DAST), secret and container scanning.
 - **Secure Authentication** — Cookie-based with BFF pattern (server-side token storage)
 - **CRUD Usuarios** — Create, read, update, delete with pagination
 - **CRUD Empleados** — With TipoEmpleado catalog, text search and type filter
-- **CRUD Clientes** — With autocomplete for sales selection
+- **JTable-style UI** — Redesigned tables with card shadow, FontAwesome 6 iconography, skeleton loaders, green accent (#109E63) sidebar
 - **CRUD Productos** — With autocomplete and stock validation
 - **CRUD Ventas with detail (VentaDetalle)** — Sales management, product assignment with autocomplete, stock validation, AJAX delete, status update
 - **Autocomplete JSON endpoints** — Clients, Users and Products with async search
@@ -25,12 +25,26 @@ analysis (SCA), dynamic analysis (DAST), secret and container scanning.
 
 ---
 
+## UI Design (July 2026 Redesign)
+
+| Component | Description |
+|-----------|-------------|
+| **Sidebar** | White background (`#ffffff`), green text (`#109E63`), active state with left green bar |
+| **Tables** | `card-table` with shadow, `table-jtable` (uppercase headers, green bottom border, soft hover) |
+| **Icons** | FontAwesome 6 — `fa-eye` (details), `fa-pen-to-square` (edit), `fa-trash-can` (delete), `fa-save` (save) |
+| **Buttons** | `btn-icon` (32×32 square icon buttons), `btn-outline-*` variants |
+| **Pagination** | `pagination-jtable` — rounded borders, green active, chevron icons |
+| **Skeleton** | 5 animated rows shown 500ms on page load via `site.js` |
+| **Loading** | CSS `@keyframes skeleton-loading` shimmer effect |
+
+---
+
 ## Technologies
 
 | Layer | Technologies |
 |---|---|
 | **Backend** | ASP.NET Core 10, Razor Pages, MVC Controllers |
-| **Frontend** | Bootstrap 5.3.x, jQuery 3.x, Toastr |
+| **Frontend** | Bootstrap 5.3.x, jQuery 3.x, Toastr, FontAwesome 6 |
 | **API Mock** | WireMock |
 | **Containers** | Docker, Docker Compose |
 | **Testing** | xUnit, Moq, Coverlet |
@@ -73,7 +87,7 @@ The application consumes an external REST API. Configure the base URL in `appset
 
 ```json
 "ApiSettings": {
-    "BaseUrl": "https://webapidevopsproject-h5fn4.ondigitalocean.app/"
+    "BaseUrl": "https://localhost:7227/"
 }
 ```
 
@@ -176,14 +190,17 @@ WebDevSecOps/
 │   │   ├── VentaService      # CRUD ventas + VentaDetalle
 │   │   ├── EstadoVentaService# Read-only catalog
 │   │   └── TipoEmpleadoService# Read-only catalog
-│   ├── Views/                # 5 modules with 4-5 views each
+│   ├── Views/                # 22 views (6 Index + 5 Create + 4 Update + 4 Delete + 3 Details)
 │   │   ├── Usuario/          # Index, Create, Details, Update, Delete
 │   │   ├── Empleado/         # Index, Create, Details, Update, Delete
 │   │   ├── Cliente/          # Index, Create, Details, Update, Delete
 │   │   ├── Producto/         # Index, Create, Details, Update, Delete
 │   │   ├── Venta/            # Index, Create, Productos
 │   │   └── Shared/           # _Layout.cshtml, _ValidationScriptsPartial
-│   └── wwwroot/              # Static files (CSS, JS, libs)
+│   ├── wwwroot/
+│   │   ├── css/site.css       # Sidebar verde, card-table, table-jtable, btn-icon, skeleton
+│   │   ├── js/site.js         # Skeleton loader, sidebar toggle, active link
+│   │   └── lib/               # Bootstrap, jQuery, Toastr, FontAwesome 6, Roboto
 ├── tests/
 │   ├── WebDevSecOps.UnitTests/
 │   │   ├── Pages/            # Tests per module (Empleados, Login, Productos,

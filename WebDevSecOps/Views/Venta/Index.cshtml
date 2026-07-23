@@ -9,110 +9,136 @@
 
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">Ventas</h2>
-        <a class="btn btn-primary" asp-action="Create" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">+ Agregar Venta</a>
+        <h2 class="mb-0"><i class="fas fa-cart-shopping me-2 text-success"></i>Ventas</h2>
+        <a class="btn btn-outline-success" asp-action="Create" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+            <i class="fas fa-plus me-1"></i>Agregar Venta
+        </a>
     </div>
 
     <form method="get" action="/Venta/Index" class="row g-3 mb-4">
         <div class="col-md-4">
-            <input type="text" name="texto" class="form-control" placeholder="Buscar por clave o cliente..." value="@texto" />
+            <div class="input-group">
+                <span class="input-group-text bg-white"><i class="fas fa-search text-muted"></i></span>
+                <input type="text" name="texto" class="form-control" placeholder="Buscar por clave o cliente..." value="@texto" />
+            </div>
         </div>
         <div class="col-md-3">
-            <label class="form-text">Desde</label>
+            <label class="form-text"><i class="fas fa-calendar-day me-1 text-muted"></i>Desde</label>
             <input type="date" name="dteFechaInicio" class="form-control" value="@dteFechaInicio" />
         </div>
         <div class="col-md-3">
-            <label class="form-text">Hasta</label>
+            <label class="form-text"><i class="fas fa-calendar-day me-1 text-muted"></i>Hasta</label>
             <input type="date" name="dteFechaFin" class="form-control" value="@dteFechaFin" />
         </div>
         <div class="col-md-2 d-flex gap-1 align-items-end">
-            <button type="submit" class="btn btn-primary w-100">Buscar</button>
-            <a href="/Venta/Index" class="btn btn-outline-secondary w-100">Limpiar</a>
+            <button type="submit" class="btn btn-outline-success w-100"><i class="fas fa-search"></i></button>
+            <a href="/Venta/Index" class="btn btn-outline-secondary w-100"><i class="fas fa-eraser"></i></a>
         </div>
     </form>
 
     @if (Model?.Items is null || Model.Items.Count == 0)
     {
-        <div class="alert alert-info">No se encontraron ventas.</div>
+        <div class="alert alert-info"><i class="fas fa-info-circle me-1"></i>No se encontraron ventas.</div>
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-striped table-hover align-middle">
-                <thead class="table-dark">
-                    <tr>
-                        <th scope="col">Fecha y Hora</th>
-                        <th scope="col">Clave Venta</th>
-                        <th scope="col">Nombre Cliente</th>
-                        <th scope="col">Estado Venta</th>
-                        <th scope="col">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var venta in Model.Items)
-                    {
-                        <tr>
-                            <td>@venta.DteFechaHoraCompra?.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@venta.StrClaveVenta</td>
-                            <td>@venta.StrNombreCliente</td>
-                            @{
-                                var estadoValor = "-";
-                                if (ViewBag.EstadoVentaDict is not null && ViewBag.EstadoVentaDict.ContainsKey(venta.IdVenCatEstado))
+        <div class="card card-table">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-list me-2 text-success"></i>Listado de Ventas</span>
+                <span class="badge bg-success">@Model.TotalCount registros</span>
+            </div>
+            <div class="card-body p-0">
+                <div id="skeleton-Venta">
+                    <div class="skeleton-table-wrapper">
+                        <div class="skeleton-table-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell-actions"></div></div>
+                        <div class="skeleton-table-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell-actions"></div></div>
+                        <div class="skeleton-table-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell-actions"></div></div>
+                        <div class="skeleton-table-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell-actions"></div></div>
+                        <div class="skeleton-table-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell-actions"></div></div>
+                    </div>
+                </div>
+                <div id="table-Venta" class="d-none">
+                    <div class="table-responsive">
+                        <table class="table-jtable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Fecha y Hora</th>
+                                    <th scope="col">Clave Venta</th>
+                                    <th scope="col">Nombre Cliente</th>
+                                    <th scope="col">Estado Venta</th>
+                                    <th scope="col" class="text-center" style="width:100px">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var venta in Model.Items)
                                 {
-                                    estadoValor = ViewBag.EstadoVentaDict[venta.IdVenCatEstado];
+                                    <tr>
+                                        <td>@venta.DteFechaHoraCompra?.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>@venta.StrClaveVenta</td>
+                                        <td>@venta.StrNombreCliente</td>
+                                        @{
+                                            var estadoValor = "-";
+                                            if (ViewBag.EstadoVentaDict is not null && ViewBag.EstadoVentaDict.ContainsKey(venta.IdVenCatEstado))
+                                            {
+                                                estadoValor = ViewBag.EstadoVentaDict[venta.IdVenCatEstado];
+                                            }
+                                        }
+                                        <td>@estadoValor</td>
+                                        <td class="text-center">
+                                            <a class="btn btn-sm btn-icon btn-outline-info" asp-action="Productos" asp-route-id="@venta.Id" title="Ver productos">
+                                                <i class="fas fa-box-open"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                                 }
-                            }
-                            <td>@estadoValor</td>
-                            <td>
-                                <a class="btn btn-sm btn-outline-info" asp-action="Productos" asp-route-id="@venta.Id">
-                                    Producto
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <small class="text-muted">Mostrando página @Model.PageNumber de @Model.TotalPages</small>
+                <nav aria-label="Navegacion de ventas">
+                    <ul class="pagination pagination-jtable mb-0">
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@(Model.PageNumber - 1)&pageSize=@Model.PageSize" title="Anterior">
+                                    <i class="fas fa-chevron-left"></i>
                                 </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link"><i class="fas fa-chevron-left"></i></span>
+                            </li>
+                        }
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@i&pageSize=@Model.PageSize">@i</a>
+                            </li>
+                        }
+
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@(Model.PageNumber + 1)&pageSize=@Model.PageSize" title="Siguiente">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link"><i class="fas fa-chevron-right"></i></span>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
         </div>
-
-        <nav aria-label="Navegacion de ventas">
-            <ul class="pagination justify-content-center">
-                @if (Model.PageNumber > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@(Model.PageNumber - 1)&pageSize=@Model.PageSize">Anterior</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">Anterior</span>
-                    </li>
-                }
-
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@i&pageSize=@Model.PageSize">@i</a>
-                    </li>
-                }
-
-                @if (Model.PageNumber < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="/Venta/Index?texto=@texto&dteFechaInicio=@dteFechaInicio&dteFechaFin=@dteFechaFin&pageNumber=@(Model.PageNumber + 1)&pageSize=@Model.PageSize">Siguiente</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">Siguiente</span>
-                    </li>
-                }
-            </ul>
-        </nav>
-
-        <p class="text-center text-muted small">
-            Mostrando pagina @Model.PageNumber de @Model.TotalPages (@Model.TotalCount registros)
-        </p>
     }
 </div>

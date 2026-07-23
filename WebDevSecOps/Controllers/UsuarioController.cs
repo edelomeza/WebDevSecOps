@@ -18,7 +18,7 @@ public class UsuarioController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(string? searchString = null, int pageNumber = 1, int pageSize = 10)
+    public async Task<IActionResult> Index(string? searchString = null, int pageNumber = 1, int pageSize = 6)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
