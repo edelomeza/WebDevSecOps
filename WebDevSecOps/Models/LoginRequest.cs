@@ -15,4 +15,8 @@ public class LoginRequest
     [Display(Name = "Contraseña")]
     [JsonPropertyName("password")]
     public string Password { get; set; } = string.Empty;
+
+    [Display(Name = "Recordar sesión")]
+    [JsonPropertyName("rememberMe")]
+    public bool RememberMe { get; set; }
 }

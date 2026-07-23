@@ -67,3 +67,47 @@ dotnet test tests\WebDevSecOps.SecurityTests
 7. Agregar ítem de menú en `Pages/Shared/_Layout.cshtml` (después de "Usuarios")
 8. Agregar datos de prueba en `tests/WebDevSecOps.UnitTests/Common/ContractTestData.cs`
 9. Crear tests unitarios, de integración y seguridad
+
+## Rediseño UI — Julio 2026
+
+### Sidebar
+- **Fondo**: blanco (`#ffffff`), texto verde `#109E63`
+- **Active**: barra izquierda `#109E63`, fondo `rgba(16,158,99,0.1)`, texto `#0d7d4f` (negrita)
+- **Archivo**: `wwwroot/css/site.css` (sección `.sidebar`)
+- **Layout**: `Pages/Shared/_Layout.cshtml`
+
+### Tablas estilo jTable
+| Clase CSS | Propósito |
+|-----------|-----------|
+| `.card-table` | Card con sombra que envuelve la tabla |
+| `.table-jtable` | Tabla con headers uppercase, borde inferior verde, hover suave |
+| `.btn-icon` | Botón cuadrado 32×32 solo con icono FA |
+| `.pagination-jtable` | Paginación con bordes redondeados, verde activo |
+| `.skeleton-table-row` / `.skeleton-cell` | Esqueleto de carga (5 filas animadas) |
+
+### Iconografía FontAwesome
+| Acción | Icono | Clase btn |
+|--------|-------|-----------|
+| Detalles | `fa-eye` | `btn-outline-info` |
+| Actualizar/Editar | `fa-pen-to-square` | `btn-outline-warning` / `btn-outline-success` |
+| Eliminar | `fa-trash-can` | `btn-outline-danger` |
+| Guardar | `fa-save` | `btn-outline-success` |
+| Cancelar/Regresar | `fa-times` / `fa-arrow-left` | `btn-outline-secondary` |
+
+### Vistas modificadas (22 archivos)
+
+| Tipo | Vistas |
+|------|--------|
+| **Index** (6) | `Empleado`, `Usuario`, `Producto`, `Cliente`, `Venta/Index`, `Venta/Productos` |
+| **Create** (5) | `Empleado`, `Usuario`, `Producto`, `Cliente`, `Venta` |
+| **Update** (4) | `Empleado`, `Usuario`, `Producto`, `Cliente` |
+| **Delete** (4) | `Empleado`, `Usuario`, `Producto`, `Cliente` |
+| **Details** (4) | `Empleado`, `Usuario`, `Producto`, `Cliente` |
+
+### Skeleton loader
+- Cada vista Index tiene HTML de skeleton estático (5 filas) oculto tras `d-none`
+- `site.js` lo muestra 500ms en `DOMContentLoaded`, luego revela la tabla real
+
+### JavaScript
+- `wwwroot/js/site.js`: skeleton toggle + active link dinámico por URL
+- CDN: jQuery, Bootstrap bundle, Toastr, FontAwesome 6 (ya instalados)

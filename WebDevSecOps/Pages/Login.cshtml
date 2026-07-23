@@ -2,38 +2,105 @@
 @model LoginModel
 @{
     ViewData["Title"] = "Iniciar Sesión";
+    ViewData["HideMenu"] = true;
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-        <h2 class="mb-4 text-center">Iniciar Sesión</h2>
-
-        @if (Model.ErrorMessage is not null)
-        {
-            <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
-                @Model.ErrorMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div id="loginSkeleton" class="login-skeleton">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card login-card skeleton-card" aria-hidden="true">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="placeholder placeholder-lg col-6 mx-auto rounded"></div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="placeholder placeholder-sm col-4 mb-2 rounded"></div>
+                        <div class="placeholder w-100 rounded" style="height: 38px;"></div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="placeholder placeholder-sm col-4 mb-2 rounded"></div>
+                        <div class="placeholder w-100 rounded" style="height: 38px;"></div>
+                    </div>
+                    <div class="placeholder w-100 rounded" style="height: 48px;"></div>
+                </div>
             </div>
-        }
+        </div>
+    </div>
+</div>
 
-        <form method="post" class="needs-validation" novalidate>
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="ReturnUrl" />
+<div id="loginFormContainer" class="login-form-container d-none">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card login-card">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <div class="login-icon-wrapper mb-3">
+                            <i class="fas fa-right-to-bracket login-icon"></i>
+                        </div>
+                        <h3 class="login-title">Iniciar Sesión</h3>
+                        <p class="login-subtitle">Acceda a su cuenta</p>
+                    </div>
 
-            <div class="mb-3">
-                <label asp-for="Input.Username" class="form-label"></label>
-                <input asp-for="Input.Username" class="form-control" autocomplete="username" />
-                <span asp-validation-for="Input.Username" class="text-danger"></span>
+                    @if (Model.ErrorMessage is not null)
+                    {
+                        <div id="errorMessage" class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+                            <i class="fas fa-circle-exclamation"></i>
+                            <span>@Model.ErrorMessage</span>
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" />
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Username" class="form-label login-label">
+                                <i class="fas fa-user me-1"></i> @Html.DisplayNameFor(m => m.Input.Username)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text login-input-icon">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input asp-for="Input.Username" class="form-control login-input" autocomplete="username" placeholder="Ingrese su usuario" />
+                            </div>
+                            <span asp-validation-for="Input.Username" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Input.Password" class="form-label login-label">
+                                <i class="fas fa-lock me-1"></i> @Html.DisplayNameFor(m => m.Input.Password)
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text login-input-icon">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input asp-for="Input.Password" class="form-control login-input" autocomplete="current-password" placeholder="Ingrese su contraseña" />
+                            </div>
+                            <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check form-switch">
+                                <input asp-for="Input.RememberMe" class="form-check-input login-switch" />
+                                <label asp-for="Input.RememberMe" class="form-check-label login-label">
+                                    <i class="fas fa-clock me-1"></i> @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn login-toggle-btn w-100">
+                            <span class="toggle-btn-text">
+                                <i class="fas fa-right-to-bracket me-2"></i>Ingresar
+                            </span>
+                            <span class="toggle-btn-icon">
+                                <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </button>
+                    </form>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label asp-for="Input.Password" class="form-label"></label>
-                <input asp-for="Input.Password" class="form-control" autocomplete="current-password" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -41,11 +108,28 @@
     <partial name="_ValidationScriptsPartial" />
     <script nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])">
         (function () {
+            const skeleton = document.getElementById('loginSkeleton');
+            const formContainer = document.getElementById('loginFormContainer');
+
+            if (skeleton && formContainer) {
+                setTimeout(function () {
+                    skeleton.classList.add('fade-out');
+                    setTimeout(function () {
+                        skeleton.classList.add('d-none');
+                        formContainer.classList.remove('d-none');
+                        formContainer.classList.add('fade-in');
+                    }, 400);
+                }, 600);
+            }
+
             const errorEl = document.getElementById('errorMessage');
             if (errorEl) {
                 setTimeout(function () {
-                    errorEl.textContent = '';
-                    errorEl.style.display = 'none';
+                    errorEl.style.transition = 'opacity 0.5s';
+                    errorEl.style.opacity = '0';
+                    setTimeout(function () {
+                        errorEl.style.display = 'none';
+                    }, 500);
                 }, 5000);
             }
         })();

@@ -3,49 +3,53 @@
     ViewData["Title"] = "Detalles del Empleado";
 }
 
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <h2 class="mb-4">Detalles del Empleado</h2>
-
-            @{
-                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
-            }
-            @if (generalErrors is { Count: > 0 })
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @foreach (var error in generalErrors)
-                    {
-                        <p class="mb-0">@error.ErrorMessage</p>
-                    }
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="card card-table">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-user-tie me-2 text-success"></i>Detalles del Empleado</h4>
                 </div>
-            }
-
-            <div class="card">
                 <div class="card-body">
+                    @{
+                        var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+                    }
+                    @if (generalErrors is { Count: > 0 })
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in generalErrors)
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
                     <dl class="row mb-0">
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrNombre)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrNombre)</dt>
                         <dd class="col-sm-8">@Model.StrNombre</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrAPaterno)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrAPaterno)</dt>
                         <dd class="col-sm-8">@(Model.StrAPaterno ?? "-")</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrAMaterno)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrAMaterno)</dt>
                         <dd class="col-sm-8">@(Model.StrAMaterno ?? "-")</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrCURP)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-id-card me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrCURP)</dt>
                         <dd class="col-sm-8">@(Model.StrCURP ?? "-")</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrValorTipoEmpleado)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-user-tag me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrValorTipoEmpleado)</dt>
                         <dd class="col-sm-8">@(Model.StrValorTipoEmpleado ?? "-")</dd>
                     </dl>
                 </div>
-            </div>
-
-            <div class="d-flex gap-2 mt-4">
-                <a class="btn btn-primary" asp-action="Update" asp-route-id="@Model.Id" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Editar</a>
-                <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Regresar</a>
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Regresar
+                    </a>
+                    <a class="btn btn-outline-success" asp-action="Update" asp-route-id="@Model.Id" asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                        <i class="fas fa-pen-to-square me-1"></i>Editar
+                    </a>
+                </div>
             </div>
         </div>
     </div>

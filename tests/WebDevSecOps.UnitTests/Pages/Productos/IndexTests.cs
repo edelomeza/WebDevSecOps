@@ -83,7 +83,7 @@ public class ProductoIndexTests
         await controller.Index();
 
         Assert.Equal(1, capturedPageNumber);
-        Assert.Equal(10, capturedPageSize);
+        Assert.Equal(6, capturedPageSize);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class ProductoIndexTests
         await controller.Index(texto: "Laptop");
 
         serviceMock.Verify(
-            x => x.SearchProductosAsync("Laptop", 1, 10, It.IsAny<CancellationToken>()),
+            x => x.SearchProductosAsync("Laptop", 1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
 
         serviceMock.Verify(
@@ -118,7 +118,7 @@ public class ProductoIndexTests
         await controller.Index();
 
         serviceMock.Verify(
-            x => x.GetProductosAsync(1, 10, It.IsAny<CancellationToken>()),
+            x => x.GetProductosAsync(1, 6, It.IsAny<CancellationToken>()),
             Times.Once);
 
         serviceMock.Verify(

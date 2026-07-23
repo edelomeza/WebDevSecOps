@@ -3,32 +3,33 @@
     ViewData["Title"] = "Detalles del Producto";
 }
 
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <h2 class="mb-4">Detalles del Producto</h2>
-
-            @{
-                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
-            }
-            @if (generalErrors is { Count: > 0 })
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @foreach (var error in generalErrors)
-                    {
-                        <p class="mb-0">@error.ErrorMessage</p>
-                    }
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="card card-table">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-box me-2 text-success"></i>Detalles del Producto</h4>
                 </div>
-            }
-
-            <div class="card">
                 <div class="card-body">
+                    @{
+                        var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+                    }
+                    @if (generalErrors is { Count: > 0 })
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in generalErrors)
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
                     <dl class="row mb-0">
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrNombreProducto)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-tag me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrNombreProducto)</dt>
                         <dd class="col-sm-8">@Model.StrNombreProducto</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrURLImagen)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-image me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrURLImagen)</dt>
                         <dd class="col-sm-8">
                             @if (!string.IsNullOrEmpty(Model.StrURLImagen))
                             {
@@ -40,23 +41,26 @@
                             }
                         </dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrDescripcion)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-align-left me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrDescripcion)</dt>
                         <dd class="col-sm-8">@(Model.StrDescripcion ?? "-")</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.IntNumeroExistencia)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-cubes me-1 text-muted"></i> @Html.DisplayNameFor(m => m.IntNumeroExistencia)</dt>
                         <dd class="col-sm-8">@Model.IntNumeroExistencia</dd>
 
-                        <dt class="col-sm-4">@Html.DisplayNameFor(m => m.DecPrecio)</dt>
+                        <dt class="col-sm-4"><i class="fas fa-dollar-sign me-1 text-muted"></i> @Html.DisplayNameFor(m => m.DecPrecio)</dt>
                         <dd class="col-sm-8">@Model.DecPrecio.ToString("C")</dd>
                     </dl>
                 </div>
-            </div>
-
-            <div class="d-flex gap-2 mt-4">
-                <a class="btn btn-primary" asp-action="Update"
-                   asp-route-id="@Model.Id"
-                   asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">Editar</a>
-                <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Regresar</a>
+                <div class="card-footer d-flex justify-content-end gap-2">
+                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Regresar
+                    </a>
+                    <a class="btn btn-outline-success" asp-action="Update"
+                       asp-route-id="@Model.Id"
+                       asp-route-returnUrl="@(Context.Request.Path + Context.Request.QueryString)">
+                        <i class="fas fa-pen-to-square me-1"></i>Editar
+                    </a>
+                </div>
             </div>
         </div>
     </div>

@@ -3,70 +3,94 @@
     ViewData["Title"] = "Actualizar Empleado";
 }
 
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <h2 class="mb-4">Actualizar Empleado</h2>
-
-            @{
-                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
-            }
-            @if (generalErrors is { Count: > 0 })
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @foreach (var error in generalErrors)
-                    {
-                        <p class="mb-0">@error.ErrorMessage</p>
+            <div class="card card-table">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-user-pen me-2 text-success"></i>Actualizar Empleado</h4>
+                </div>
+                <div class="card-body">
+                    @{
+                        var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
                     }
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    @if (generalErrors is { Count: > 0 })
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in generalErrors)
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="RowVersion" type="hidden" />
+
+                        <div class="mb-3">
+                            <label asp-for="StrNombre" class="form-label"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrNombre)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-user text-muted"></i></span>
+                                <input asp-for="StrNombre" class="form-control" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="StrNombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="StrAPaterno" class="form-label"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrAPaterno)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-user text-muted"></i></span>
+                                <input asp-for="StrAPaterno" class="form-control" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="StrAPaterno" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="StrAMaterno" class="form-label"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrAMaterno)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-user text-muted"></i></span>
+                                <input asp-for="StrAMaterno" class="form-control" autocomplete="off" />
+                            </div>
+                            <span asp-validation-for="StrAMaterno" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="StrCURP" class="form-label"><i class="fas fa-id-card me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrCURP)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-id-card text-muted"></i></span>
+                                <input asp-for="StrCURP" class="form-control" autocomplete="off" maxlength="18" />
+                            </div>
+                            <span asp-validation-for="StrCURP" class="text-danger"></span>
+                            <div id="curpFeedback" class="form-text"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IdEmpCatTipoEmpleado" class="form-label"><i class="fas fa-user-tag me-1 text-muted"></i> @Html.DisplayNameFor(m => m.IdEmpCatTipoEmpleado)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fas fa-user-tag text-muted"></i></span>
+                                <select asp-for="IdEmpCatTipoEmpleado" class="form-select" asp-items="ViewBag.TipoEmpleadoList">
+                                    <option value="">Seleccione un tipo</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="IdEmpCatTipoEmpleado" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-outline-success">
+                                <i class="fas fa-save me-1"></i>Guardar
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            }
-
-            <form method="post" class="needs-validation" novalidate>
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
-
-                <input asp-for="Id" type="hidden" />
-                <input asp-for="RowVersion" type="hidden" />
-
-                <div class="mb-3">
-                    <label asp-for="StrNombre" class="form-label"></label>
-                    <input asp-for="StrNombre" class="form-control" autocomplete="off" />
-                    <span asp-validation-for="StrNombre" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="StrAPaterno" class="form-label"></label>
-                    <input asp-for="StrAPaterno" class="form-control" autocomplete="off" />
-                    <span asp-validation-for="StrAPaterno" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="StrAMaterno" class="form-label"></label>
-                    <input asp-for="StrAMaterno" class="form-control" autocomplete="off" />
-                    <span asp-validation-for="StrAMaterno" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="StrCURP" class="form-label"></label>
-                    <input asp-for="StrCURP" class="form-control" autocomplete="off" maxlength="18" />
-                    <span asp-validation-for="StrCURP" class="text-danger"></span>
-                    <div id="curpFeedback" class="form-text"></div>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="IdEmpCatTipoEmpleado" class="form-label"></label>
-                    <select asp-for="IdEmpCatTipoEmpleado" class="form-select" asp-items="ViewBag.TipoEmpleadoList">
-                        <option value="">Seleccione un tipo</option>
-                    </select>
-                    <span asp-validation-for="IdEmpCatTipoEmpleado" class="text-danger"></span>
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Guardar</button>
-                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Cancelar</a>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

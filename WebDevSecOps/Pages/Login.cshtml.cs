@@ -70,7 +70,15 @@ public class LoginModel : PageModel
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = Input.RememberMe,
+                ExpiresUtc = Input.RememberMe
+                    ? DateTimeOffset.UtcNow.AddDays(30)
+                    : DateTimeOffset.UtcNow.AddHours(8)
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
             _logger.LogInformation("User {Username} logged in successfully", Input.Username);
 

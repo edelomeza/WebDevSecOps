@@ -3,59 +3,65 @@
     ViewData["Title"] = "Eliminar Cliente";
 }
 
-<div class="container">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <h2 class="mb-4">Eliminar Cliente</h2>
-
-            @{
-                var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
-            }
-            @if (generalErrors is { Count: > 0 })
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    @foreach (var error in generalErrors)
-                    {
-                        <p class="mb-0">@error.ErrorMessage</p>
-                    }
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="card card-table">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-handshake me-2 text-danger"></i>Eliminar Cliente</h4>
                 </div>
-            }
+                <div class="card-body">
+                    <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                        <i class="fas fa-exclamation-triangle text-warning fs-5"></i>
+                        <span>Esta acci&oacute;n no se puede deshacer. Confirme que desea eliminar este cliente.</span>
+                    </div>
 
-            <div class="alert alert-warning">
-                <strong>Advertencia:</strong> Esta accion no se puede deshacer. Confirme que desea eliminar este cliente.
-            </div>
+                    @{
+                        var generalErrors = ViewData.ModelState[string.Empty]?.Errors;
+                    }
+                    @if (generalErrors is { Count: > 0 })
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @foreach (var error in generalErrors)
+                            {
+                                <p class="mb-0">@error.ErrorMessage</p>
+                            }
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
 
-            <form method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
 
-                <input asp-for="Id" type="hidden" />
-                <input asp-for="RowVersion" type="hidden" />
+                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="RowVersion" type="hidden" />
 
-                <div class="card">
-                    <div class="card-body">
                         <dl class="row mb-0">
-                            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrNombreCliente)</dt>
+                            <dt class="col-sm-4"><i class="fas fa-user me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrNombreCliente)</dt>
                             <dd class="col-sm-8">@Model.StrNombreCliente</dd>
 
-                            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrDireccionCliente)</dt>
+                            <dt class="col-sm-4"><i class="fas fa-map-marker-alt me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrDireccionCliente)</dt>
                             <dd class="col-sm-8">@(Model.StrDireccionCliente ?? "-")</dd>
 
-                            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrCorreoElectronico)</dt>
+                            <dt class="col-sm-4"><i class="fas fa-envelope me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrCorreoElectronico)</dt>
                             <dd class="col-sm-8">@Model.StrCorreoElectronico</dd>
 
-                            <dt class="col-sm-4">@Html.DisplayNameFor(m => m.StrNumeroTelefono)</dt>
+                            <dt class="col-sm-4"><i class="fas fa-phone me-1 text-muted"></i> @Html.DisplayNameFor(m => m.StrNumeroTelefono)</dt>
                             <dd class="col-sm-8">@Model.StrNumeroTelefono</dd>
                         </dl>
-                    </div>
-                </div>
 
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
-                    <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-secondary">Cancelar</a>
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="@(ViewData["ReturnUrl"] ?? Url.Action("Index"))" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-trash-can me-1"></i>Confirmar Eliminar
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>

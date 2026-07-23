@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebDevSecOps</title>
+    <script type="importmap" nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebDevSecOps.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js" nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])"></script>
+    <script src="~/lib/toastr/toastr.min.js" nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])"></script>
+    <script src="~/js/site.js" asp-append-version="true" nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])"></script>
+
+    <script nonce="@(ViewContext.HttpContext.Items["ScriptNonce"])">
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideMethod": "fadeOut"
+        };
+
+        @if (TempData["Success"] is not null)
+        {
+            @:toastr["success"]("Operación exitosa!!");
+        }
+        @if (TempData["Error"] is not null)
+        {
+            @:toastr["error"]("Error al procesar la operación");
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
